@@ -3,5 +3,5 @@ window.SITE = {
   owner:  "Cqxet",
   repo:   "projeler",      // projects.json'ın durduğu PUBLIC repo
   branch: "main",
-  file:   "projects.json"
+  file:   "public/projects.json"
 };
