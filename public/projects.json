@@ -1,15 +1,5 @@
 [
   {
-    "title": "a-cad",
-    "desc": "A - kisisel parametrik CAD",
-    "url": "https://a-cad.vercel.app",
-    "tag": "TypeScript",
-    "emoji": "📁",
-    "img": "",
-    "video": "",
-    "demo": ""
-  },
-  {
     "title": "HollowSignal",
     "desc": "",
     "url": "https://github.com/Cqxet/HollowSignal",
