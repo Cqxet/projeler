@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
   if (!token || !owner || !repo) { res.statusCode = 503; return res.end('GITHUB_TOKEN / GH_OWNER / GH_REPO tanimli degil.'); }
 
   let p = String(req.query && req.query.path || '');
-  const okContents = p.startsWith(`/repos/${owner}/${repo}/contents/`);
+  const okContents = p.toLowerCase().startsWith(`/repos/${owner}/${repo}/contents/`.toLowerCase());
   const okList = p.startsWith('/user/repos?');
   if (p.includes('..') || p.includes('//') || !(okContents || okList)) { res.statusCode = 403; return res.end('Yasak yol.'); }
   if (!['GET', 'PUT'].includes(req.method) || (okList && req.method !== 'GET')) { res.statusCode = 405; return res.end('Yasak metod.'); }
