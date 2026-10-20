@@ -1,0 +1,52 @@
+[
+  {
+    "title": "a-cad",
+    "desc": "A - kisisel parametrik CAD",
+    "url": "https://a-cad.vercel.app",
+    "tag": "TypeScript",
+    "emoji": "📁",
+    "img": "",
+    "video": "",
+    "demo": ""
+  },
+  {
+    "title": "HollowSignal",
+    "desc": "",
+    "url": "https://github.com/Cqxet/HollowSignal",
+    "tag": "C#",
+    "emoji": "📁",
+    "img": "",
+    "video": "",
+    "demo": ""
+  },
+  {
+    "title": "altyazi-studyo",
+    "desc": "Windows video editor with automatic Turkish subtitles (Premiere-like UI, keyframes, Shorts export)",
+    "url": "https://github.com/Cqxet/altyazi-studyo",
+    "tag": "Python",
+    "emoji": "📁",
+    "img": "",
+    "video": "",
+    "demo": ""
+  },
+  {
+    "title": "game-studio-combined",
+    "desc": "",
+    "url": "https://github.com/Cqxet/game-studio-combined",
+    "tag": "C#",
+    "emoji": "📁",
+    "img": "",
+    "video": "",
+    "demo": ""
+  },
+  {
+    "title": "pirate-chaos-3d",
+    "desc": "Godot 4 pirate chaos open-world 3D (Steam WIP)",
+    "url": "https://github.com/Cqxet/pirate-chaos-3d",
+    "tag": "GDScript",
+    "emoji": "📁",
+    "img": "",
+    "video": "",
+    "demo": ""
+  }
+]
