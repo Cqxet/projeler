@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="dark">
 <title>cqxet.site – Projelerim</title>
 <style>
   :root{
-    color-scheme:light;
-    --bg:#f5f4f0; --ink:#14151a; --mut:#6b6f7b; --line:rgba(20,21,26,.08);
-    --glass:rgba(255,255,255,.62); --glass2:rgba(255,255,255,.85);
-    --a1:#7c9cff; --a2:#ff9ecb; --a3:#ffd479; --a4:#7de3c6; --acc:#4f5dff;
+    color-scheme:dark;
+    --bg:#0b0c12; --ink:#eceef5; --mut:#9aa0b4; --line:rgba(255,255,255,.09);
+    --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.06);
+    --a1:#7c9cff; --a2:#ff9ecb; --a3:#ffd479; --a4:#7de3c6; --acc:#8f9bff;
     --r:26px; --ease:cubic-bezier(.2,.8,.2,1);
   }
   *{box-sizing:border-box}
@@ -19,11 +19,11 @@
 
   /* yumuşak, hareketli renk bulutları */
   .aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
-  .aurora i{position:absolute;border-radius:50%;filter:blur(80px);opacity:.55;will-change:transform;animation:float 22s var(--ease) infinite alternate}
+  .aurora i{position:absolute;border-radius:50%;filter:blur(80px);opacity:.30;will-change:transform;animation:float 22s var(--ease) infinite alternate}
   .aurora i:nth-child(1){width:46vw;height:46vw;left:-10vw;top:-12vw;background:var(--a1)}
   .aurora i:nth-child(2){width:38vw;height:38vw;right:-8vw;top:6vh;background:var(--a2);animation-duration:28s;animation-delay:-6s}
-  .aurora i:nth-child(3){width:34vw;height:34vw;left:30vw;top:38vh;background:var(--a3);opacity:.4;animation-duration:32s;animation-delay:-12s}
-  .aurora i:nth-child(4){width:30vw;height:30vw;right:10vw;bottom:-10vw;background:var(--a4);opacity:.4;animation-duration:26s;animation-delay:-3s}
+  .aurora i:nth-child(3){width:34vw;height:34vw;left:30vw;top:38vh;background:var(--a3);opacity:.20;animation-duration:32s;animation-delay:-12s}
+  .aurora i:nth-child(4){width:30vw;height:30vw;right:10vw;bottom:-10vw;background:var(--a4);opacity:.20;animation-duration:26s;animation-delay:-3s}
   @keyframes float{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(6vw,4vh,0) scale(1.15)}100%{transform:translate3d(-5vw,8vh,0) scale(.95)}}
   .grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
@@ -41,31 +41,31 @@
 
   /* arama çubuğu */
   .bar{position:sticky;top:12px;z-index:30;max-width:1180px;margin:0 auto 26px;padding:0 20px}
-  .barin{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px;border-radius:22px;background:var(--glass2);border:1px solid var(--line);backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 10px 40px -12px rgba(30,30,80,.18)}
+  .barin{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px;border-radius:22px;background:var(--glass2);border:1px solid var(--line);backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 10px 40px -12px rgba(0,0,0,.6)}
   #q{flex:1;min-width:180px;border:0;background:transparent;padding:10px 14px;font:inherit;color:var(--ink);outline:none}
   #q::placeholder{color:var(--mut)}
   #tags{display:flex;gap:6px;flex-wrap:wrap}
   .tag{padding:8px 16px;border-radius:999px;border:0;background:transparent;color:var(--mut);cursor:pointer;font:inherit;font-size:.9rem;transition:all .25s var(--ease)}
-  .tag:hover{color:var(--ink);background:rgba(20,21,26,.05)}
-  .tag.on{background:var(--ink);color:#fff}
+  .tag:hover{color:var(--ink);background:rgba(255,255,255,.08)}
+  .tag.on{background:#fff;color:#14151a}
 
   /* kartlar (bento düzeni) */
   main{max-width:1180px;margin:0 auto;padding:0 20px 90px;display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));grid-auto-flow:dense}
   @media(min-width:900px){a.card.feat{grid-column:span 2}a.card.feat .thumb{aspect-ratio:21/9}}
   a.card{--mx:50%;--my:50%;position:relative;display:flex;flex-direction:column;color:inherit;text-decoration:none;border-radius:var(--r);background:var(--glass2);border:1px solid var(--line);backdrop-filter:blur(16px);
-    box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 14px 40px -18px rgba(30,30,80,.25);
+    box-shadow:0 1px 0 rgba(255,255,255,.07) inset,0 14px 40px -18px rgba(0,0,0,.7);
     transition:transform .45s var(--ease),box-shadow .45s var(--ease),opacity .7s var(--ease);will-change:transform}
   a.card.rv{opacity:0;transform:translateY(26px) scale(.98)}
   a.card.rv.in{opacity:1;transform:none}
-  a.card.in:hover{transform:translateY(-8px);box-shadow:0 1px 0 rgba(255,255,255,.9) inset,0 30px 60px -20px rgba(60,60,160,.35)}
+  a.card.in:hover{transform:translateY(-8px);box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 30px 60px -20px rgba(0,0,0,.8)}
   a.card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;background:radial-gradient(420px circle at var(--mx) var(--my),rgba(124,156,255,.16),transparent 60%)}
   a.card:hover::after{opacity:1}
   .thumb{position:relative;aspect-ratio:16/10;border-radius:var(--r) var(--r) 0 0;background:linear-gradient(135deg,var(--a1),var(--a2));display:grid;place-items:center;font-size:3rem;color:#fff;overflow:visible}
   .thumb img:not(.ic){width:100%;height:100%;object-fit:cover;border-radius:var(--r) var(--r) 0 0;transition:transform .8s var(--ease)}
   a.card:hover .thumb img:not(.ic){transform:scale(1.04)}
   .thumb{overflow:visible}
-  .badge{position:absolute;top:14px;left:14px;font-size:.72rem;font-weight:600;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.8);color:var(--ink);backdrop-filter:blur(10px)}
-  .thumb .ic{position:absolute;left:18px;bottom:-24px;width:52px;height:52px;border-radius:16px;object-fit:cover;background:#fff;border:3px solid #fff;box-shadow:0 8px 20px -6px rgba(20,20,60,.35)}
+  .badge{position:absolute;top:14px;left:14px;font-size:.72rem;font-weight:600;padding:5px 12px;border-radius:999px;background:rgba(10,11,18,.6);color:#fff;backdrop-filter:blur(10px)}
+  .thumb .ic{position:absolute;left:18px;bottom:-24px;width:52px;height:52px;border-radius:16px;object-fit:cover;background:#1a1c26;border:3px solid #1a1c26;box-shadow:0 8px 20px -6px rgba(0,0,0,.6)}
   .body{padding:36px 20px 20px}
   .body h2{margin:0 0 6px;font-size:1.25rem;letter-spacing:-.02em}
   .body p{margin:0;color:var(--mut);font-size:.94rem}
@@ -74,10 +74,10 @@
   footer{text-align:center;color:var(--mut);padding:0 20px 40px;font-size:.85rem}
 
   /* açılır pencere */
-  #modal{position:fixed;inset:0;background:rgba(20,21,40,.45);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+  #modal{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
   #modal.on{display:flex;animation:fade .25s ease}
   @keyframes fade{from{opacity:0}}
-  .mbox{background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:28px;width:min(940px,100%);max-height:92vh;overflow:auto;box-shadow:0 40px 100px -30px rgba(20,20,80,.5);animation:pop .4s var(--ease)}
+  .mbox{background:#14161f;border:1px solid var(--line);border-radius:28px;width:min(940px,100%);max-height:92vh;overflow:auto;box-shadow:0 40px 100px -30px rgba(0,0,0,.9);animation:pop .4s var(--ease)}
   @keyframes pop{from{opacity:0;transform:translateY(20px) scale(.97)}}
   .mmedia{aspect-ratio:16/9;background:#0e0f14;border-radius:28px 28px 0 0;overflow:hidden}
   .mmedia iframe,.mmedia video{width:100%;height:100%;border:0;display:block}
@@ -87,7 +87,7 @@
   .mtext h2{margin:0 0 4px;font-size:1.6rem;letter-spacing:-.02em}
   .mtext p{margin:0 0 16px;color:var(--mut)}
   .meta{color:var(--acc);font-size:.85rem;margin-bottom:8px}
-  .mbtn{display:inline-block;padding:10px 18px;border-radius:999px;background:var(--ink);color:#fff;text-decoration:none;margin:0 8px 8px 0;border:0;font:inherit;cursor:pointer;transition:transform .2s var(--ease)}
+  .mbtn{display:inline-block;padding:10px 18px;border-radius:999px;background:#fff;color:#14151a;text-decoration:none;margin:0 8px 8px 0;border:0;font:inherit;cursor:pointer;transition:transform .2s var(--ease)}
   .mbtn:hover{transform:translateY(-2px)}
   .mbtn.g{background:transparent;border:1px solid var(--line);color:var(--ink)}
 
