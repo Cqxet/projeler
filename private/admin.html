@@ -91,8 +91,13 @@ async function connect(){
   cfg={owner:def.owner,repo:def.repo,branch:def.branch||'main'};
   const r=await api(`/repos/${cfg.owner}/${cfg.repo}/contents/${file()}?ref=${cfg.branch}`);
   if(r.status===404){ data=[]; sha=null; msg('projects.json yok; ilk kayıtta oluşturulacak.'); }
-  else if(r.status===401||r.status===403) return msg('Token geçersiz veya yetkisiz.',false);
-  else if(!r.ok) return msg('Bağlanılamadı: '+r.status,false);
+  else if(!r.ok){
+    let t=''; try{t=(await r.text()).slice(0,200)}catch(e){}
+    const why=r.status===401?(t.includes('Giris')?'Giriş şifresi geçersiz (sayfayı yenile).':'GitHub token geçersiz veya süresi dolmuş (Vercel GITHUB_TOKEN).')
+      :r.status===403?(t.includes('Yasak')?'GH_OWNER / GH_REPO Vercel ayarı config.js ile uyuşmuyor.':'GitHub token bu repoya yetkili değil (Contents: Read and write).')
+      :r.status===503?'Vercel ortam değişkenleri eksik (GITHUB_TOKEN, GH_OWNER, GH_REPO).':'Bağlanılamadı.';
+    return msg(why+' ['+r.status+'] '+t.replace(/\s+/g,' ').slice(0,120),false)
+  }
   else { const j=await r.json(); sha=j.sha; try{data=JSON.parse(unb64(j.content))}catch(e){return msg('projects.json bozuk.',false)} }
   $('app').classList.remove('hide'); render(); msg('Bağlandı ✔'); pickRepos();
 }
