@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
 <title>cqxet.site – Projelerim</title>
+<meta name="description" content="Yaptığım oyunlar ve uygulamalar.">
+<meta name="theme-color" content="#0b0c12">
+<meta property="og:title" content="Projelerim">
+<meta property="og:description" content="Yaptığım oyunlar ve uygulamalar.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238f9bff'/%3E%3Cstop offset='1' stop-color='%23ff7aa8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%230b0c12'/%3E%3Ccircle cx='32' cy='32' r='14' fill='none' stroke='url(%23g)' stroke-width='8'/%3E%3C/svg%3E">
 <style>
   :root{
     color-scheme:dark;
@@ -91,6 +96,7 @@
   .mbtn:hover{transform:translateY(-2px)}
   .mbtn.g{background:transparent;border:1px solid var(--line);color:var(--ink)}
 
+  @media(max-width:600px){.bar{position:static}}
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}a.card.rv{opacity:1;transform:none}}
 </style>
 </head>
@@ -105,14 +111,15 @@
 </header>
 
 <div class="bar"><div class="barin">
-  <input id="q" type="search" placeholder="Proje ara…">
+  <input id="q" type="search" placeholder="Proje ara…" aria-label="Proje ara">
   <div id="tags"></div>
 </div></div>
 
 <main id="grid"></main>
+<noscript><p style="text-align:center;color:#9aa0b4;padding:40px">Projeleri görmek için JavaScript gerekli.</p></noscript>
 <footer>© cqxet.site</footer>
 
-<div id="modal" role="dialog" aria-modal="true">
+<div id="modal" role="dialog" aria-modal="true" aria-label="Proje ayrıntısı">
   <div class="mbox">
     <div class="tabs" id="mtabs"></div>
     <div class="mmedia" id="mmedia"></div>
@@ -168,7 +175,7 @@ function showMedia(kind,p){
   else{el=document.createElement('iframe');el.src=e.src;el.allowFullscreen=true;el.loading='lazy';
        el.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
        if(kind==='demo'){el.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-popups')}
-       el.referrerPolicy='no-referrer'}
+       el.referrerPolicy=kind==='demo'?'no-referrer':'strict-origin-when-cross-origin'}
   mmedia.appendChild(el);
   [...mtabs.children].forEach(b=>b.classList.toggle('on',b.dataset.k===kind));
 }
@@ -209,6 +216,7 @@ function render(){
   grid.innerHTML=list.length?'':'<div class="empty">Sonuç yok.</div>';
   list.forEach((p,idx)=>{
     const a=document.createElement('a');a.className='card';a.href=safeUrl(p.url);
+    if(/^https?:\/\//i.test(a.href)&&new URL(a.href).origin!==location.origin){a.target='_blank';a.rel='noopener noreferrer'}
     if(p.video||p.demo) a.onclick=e=>{e.preventDefault();openModal(p)};
     const th=document.createElement('div');th.className='thumb';
     if(p.img&&safeUrl(p.img)!=='#'){const i=document.createElement('img');i.src=p.img;i.alt=p.title;i.loading='lazy';th.appendChild(i)}else th.append(p.emoji||'📁');
@@ -225,7 +233,7 @@ function render(){
   });
 }
 
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08,rootMargin:'0px 0px -40px 0px'});
+const io='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08,rootMargin:'0px 0px -40px 0px'}):{observe:e=>e.classList.add('in')};
 grid.addEventListener('pointermove',e=>{const c=e.target.closest('a.card');if(!c)return;const r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px')});
 function renderStats(d){
   const n=t=>d.filter(p=>p.type===t).length;

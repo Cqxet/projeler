@@ -3,7 +3,7 @@ const auth = require('./_auth');
 // Panelden gelen istekleri, sunucudaki GITHUB_TOKEN ile GitHub'a iletir.
 // Sadece izin verilen yollar: bu reponun contents'i ve kullanicinin repo listesi.
 module.exports = async (req, res) => {
-  if (!auth(req, res)) return;
+  if (!(await auth(req, res))) return;
   const clean = v => String(v || '').trim().replace(/^\/+|\/+$/g, '');
   const token = String(process.env.GITHUB_TOKEN || '').trim(), owner = clean(process.env.GH_OWNER), repo = clean(process.env.GH_REPO);
   if (!token || !owner || !repo) { res.statusCode = 503; return res.end('GITHUB_TOKEN / GH_OWNER / GH_REPO tanimli degil.'); }

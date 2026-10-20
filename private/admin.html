@@ -157,7 +157,7 @@ const TYPES={oyun:'Oyun',uygulama:'Uygulama'}, EMO={oyun:'🎮',uygulama:'📱'}
 const def=window.SITE||{}, file=()=>def.file||'public/projects.json';
 const okUrl=u=>/^(https?:\/\/|\/|\.\/|[\w-]+\/)/i.test(u||'');
 const today=()=>new Date().toLocaleDateString('sv-SE');
-const MAX=3*1024*1024;
+const MAX=3e6;
 let cfg={}, data=[], sha=null, editing=-1, pend={}, repoList=[], filt={q:'',type:''};
 
 /* ---------- yardımcılar ---------- */
