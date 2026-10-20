@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
   const r = await fetch('https://api.github.com' + p, {
     method: req.method,
     headers: {
-      Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + token,
+      Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + (okList ? (String(process.env.GITHUB_LIST_TOKEN || '').trim() || token) : token),
       'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json', 'User-Agent': 'cqxet-admin'
     },
     body: req.method === 'PUT' ? (typeof req.body === 'string' ? req.body : JSON.stringify(req.body)) : undefined
