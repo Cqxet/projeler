@@ -1,0 +1,8 @@
+{
+  "functions": { "api/admin.js": { "includeFiles": "private/**" } },
+  "routes": [
+    { "src": "/admin(\.html)?/?", "dest": "/api/admin" },
+    { "src": "/private/(.*)", "status": 404 },
+    { "handle": "filesystem" }
+  ]
+}
