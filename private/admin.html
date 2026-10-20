@@ -39,18 +39,6 @@
   <div class="mut">Değişiklikler doğrudan GitHub'a commit edilir; site otomatik güncellenir.</div>
   <div id="msg"></div>
 
-  <div class="box" id="setup">
-    <h2>🔐 Bağlantı</h2>
-    <div class="row">
-      <div><label>GitHub kullanıcı adı</label><input id="owner"></div>
-      <div><label>Repo (projects.json burada)</label><input id="repo"></div>
-      <div><label>Branch</label><input id="branch" value="main"></div>
-      <div><label>Fine-grained Token (yalnızca bu repo, Contents: Read&amp;Write)</label><input id="token" type="password" autocomplete="off"></div>
-    </div>
-    <div class="mut" style="margin-top:8px;font-size:.85rem">Token sadece bu tarayıcıda (localStorage) saklanır, sunucuya gitmez. Başkası token olmadan hiçbir şey değiştiremez.</div>
-    <div class="bar"><button class="p" id="connect">Bağlan</button><button id="forget">Bilgileri sil</button></div>
-  </div>
-
   <div id="app" class="hide">
     <div class="box">
       <h2>📋 Projeler <span class="mut" id="count"></span></h2>
@@ -90,10 +78,9 @@ let cfg={}, data=[], sha=null, editing=-1, repoList=[];
 
 try{cfg=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
 const def=window.SITE||{};
-['owner','repo','branch','token'].forEach(k=>$(k).value=cfg[k]||(k!=='token'?(def[k]&&!String(def[k]).startsWith('GITHUB_')?def[k]:$(k).value):''));
 
 function msg(t,ok=true){const m=$('msg');m.textContent=t;m.className=ok?'ok':'err';clearTimeout(msg.t);msg.t=setTimeout(()=>m.className='',4500)}
-const api=(path,opt={})=>fetch('https://api.github.com'+path,{...opt,headers:{Accept:'application/vnd.github+json','Authorization':'Bearer '+cfg.token,'X-GitHub-Api-Version':'2022-11-28',...(opt.headers||{})}});
+const api=(path,opt={})=>fetch('/api/gh?path='+encodeURIComponent(path),{...opt,headers:{'Content-Type':'application/json'}});
 const b64=s=>btoa(String.fromCharCode(...new TextEncoder().encode(s)));
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,'')),c=>c.charCodeAt(0)));
 const fileB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f)});
@@ -101,14 +88,12 @@ const okUrl=u=>/^(https?:\/\/|\/|\.\/|[\w-]+\/)/i.test(u);
 const file=()=>def.file||'projects.json';
 
 async function connect(){
-  cfg={owner:$('owner').value.trim(),repo:$('repo').value.trim(),branch:$('branch').value.trim()||'main',token:$('token').value.trim()};
-  if(!cfg.owner||!cfg.repo||!cfg.token) return msg('Tüm alanları doldur.',false);
+  cfg={owner:def.owner,repo:def.repo,branch:def.branch||'main'};
   const r=await api(`/repos/${cfg.owner}/${cfg.repo}/contents/${file()}?ref=${cfg.branch}`);
   if(r.status===404){ data=[]; sha=null; msg('projects.json yok; ilk kayıtta oluşturulacak.'); }
   else if(r.status===401||r.status===403) return msg('Token geçersiz veya yetkisiz.',false);
   else if(!r.ok) return msg('Bağlanılamadı: '+r.status,false);
   else { const j=await r.json(); sha=j.sha; try{data=JSON.parse(unb64(j.content))}catch(e){return msg('projects.json bozuk.',false)} }
-  localStorage.setItem(LS,JSON.stringify(cfg));
   $('app').classList.remove('hide'); render(); msg('Bağlandı ✔'); pickRepos();
 }
 
@@ -189,7 +174,7 @@ async function save(){
 async function pickRepos(){
   const box=$('repos'); box.textContent='Yükleniyor…';
   const r=await api('/user/repos?per_page=100&sort=pushed&affiliation=owner');
-  if(!r.ok){box.textContent='Repolar alınamadı.';return msg('Repolar alınamadı (token'+"'"+'a Metadata: Read izni gerekir).',false)}
+  if(!r.ok){box.textContent='Repolar alınamadı.';return msg('Repolar alınamadı. Vercel GITHUB_TOKEN için Metadata: Read izni gerekir.',false)}
   repoList=(await r.json()).filter(x=>!x.fork&&x.name!==cfg.repo);
   box.innerHTML='';
   if(!repoList.length) box.textContent='Eklenebilir repo yok.';
@@ -217,9 +202,9 @@ async function addSelected(){
   } finally {$('addSel').disabled=false}
 }
 
-$('connect').onclick=connect; $('save').onclick=save; $('cancel').onclick=reset; $('addSel').onclick=addSelected; $('reload').onclick=pickRepos;
-$('forget').onclick=()=>{localStorage.removeItem(LS);$('token').value='';$('app').classList.add('hide');msg('Bilgiler silindi')};
-if(cfg.token&&cfg.owner&&cfg.repo) connect();
+$('save').onclick=save; $('cancel').onclick=reset; $('addSel').onclick=addSelected; $('reload').onclick=pickRepos;
+
+connect();
 </script>
 </body>
 </html>
