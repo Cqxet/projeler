@@ -66,5 +66,22 @@
     "demo": "",
     "download": "",
     "version": ""
+  },
+  {
+    "title": "Pirate Chaos",
+    "type": "oyun",
+    "tag": "GDScript",
+    "desc": "Godot 4 pirate chaos open-world 3D (Steam WIP)",
+    "emoji": "🎮",
+    "url": "https://github.com/Cqxet/pirate-chaos-3d",
+    "repo": "https://github.com/Cqxet/pirate-chaos-3d",
+    "updated": "2026-10-06",
+    "icon": "",
+    "img": "",
+    "video": "",
+    "subtitle": "",
+    "demo": "",
+    "download": "",
+    "version": ""
   }
 ]
