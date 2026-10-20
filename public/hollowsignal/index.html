@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Hollow Signal – Psikolojik korku oyunu</title>
+<meta name="description" content="1987, dağ tepesinde terk edilmiş bir röle istasyonu. Radyoya giren sesler geleceği anlatıyor. Hangisine inanacaksın?">
+<meta name="theme-color" content="#07080a">
+<meta property="og:title" content="Hollow Signal">
+<meta property="og:description" content="1987, terk edilmiş bir röle istasyonu. Radyodaki sesler geleceği anlatıyor.">
+<meta property="og:image" content="/uploads/images/1792503042378-hollow_signal_kasim_1987.webp">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307080a'/%3E%3Cpath d='M12 40q20-26 40 0M20 40q12-14 24 0' fill='none' stroke='%23ffb454' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='46' r='4' fill='%23ffb454'/%3E%3C/svg%3E">
+<style>
+  :root{color-scheme:dark;--bg:#07080a;--ink:#e8e1d0;--mut:#8f8a7c;--amb:#ffb454;--amb2:#ff7a45;--line:rgba(255,180,84,.18);--mono:ui-monospace,"Cascadia Mono",Consolas,"Courier New",monospace}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.7 Georgia,"Times New Roman",serif;overflow-x:hidden}
+  a{color:var(--amb)}
+  /* tarama çizgileri + vinyet */
+  body::before{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);mix-blend-mode:multiply}
+  body::after{content:"";position:fixed;inset:0;z-index:59;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.65))}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+  .mono{font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;font-size:.78rem;color:var(--amb)}
+
+  /* üst bar */
+  .nav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:linear-gradient(#07080acc,transparent)}
+  .nav a{font:600 .8rem var(--mono);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--ink);opacity:.8}
+  .nav a:hover{opacity:1;color:var(--amb)}
+
+  /* hero */
+  .hero{position:relative;min-height:100svh;display:grid;align-items:end;padding:120px 0 70px;isolation:isolate}
+  .hero .bg{position:absolute;inset:0;z-index:-2;background:#000 url("/uploads/images/1792503042378-hollow_signal_kasim_1987.webp") center 30%/cover no-repeat;filter:saturate(.85) contrast(1.05);animation:flick 7s infinite}
+  .hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,var(--bg) 4%,rgba(7,8,10,.55) 45%,rgba(7,8,10,.25))}
+  .hero::before{content:"";position:absolute;left:0;right:0;top:0;height:34%;z-index:-1;background:linear-gradient(#07080a 25%,rgba(7,8,10,.85) 60%,transparent)}
+  @keyframes flick{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.82}94%{opacity:1}96%{opacity:.9}97%{opacity:1}}
+  .badge{display:inline-flex;align-items:center;gap:9px;padding:6px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(7,8,10,.6);backdrop-filter:blur(6px)}
+  .badge i{width:8px;height:8px;border-radius:50%;background:var(--amb2);box-shadow:0 0 10px var(--amb2);animation:blink 1.6s infinite}
+  @keyframes blink{50%{opacity:.25}}
+  h1{margin:18px 0 10px;font:800 clamp(2.8rem,10vw,7.4rem)/.95 var(--mono);letter-spacing:.04em;text-transform:uppercase;text-shadow:0 0 30px rgba(255,160,60,.25)}
+  h1 em{display:block;font-style:normal;color:var(--amb);font-weight:400;letter-spacing:.3em;font-size:.32em;margin-top:.5em}
+  .tag{max-width:620px;font-size:clamp(1.05rem,2.4vw,1.3rem);color:#d8d0bc}
+  .cta{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:13px 24px;border-radius:2px;border:1px solid var(--amb);color:var(--amb);text-decoration:none;font:600 .85rem var(--mono);letter-spacing:.1em;text-transform:uppercase;background:rgba(7,8,10,.5);cursor:pointer;transition:.25s}
+  .btn:hover{background:var(--amb);color:#111}
+  .btn.off{border-color:var(--line);color:var(--mut);cursor:default}
+  .btn.off:hover{background:rgba(7,8,10,.5);color:var(--mut)}
+
+  section{padding:90px 0}
+  h2{font:700 clamp(1.5rem,4vw,2.3rem)/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;margin:6px 0 18px}
+  .lead{max-width:680px;color:#cfc8b6}
+
+  /* radyo kadranı */
+  .radio{position:relative;border:1px solid var(--line);border-radius:8px;background:linear-gradient(#0f1012,#0a0b0d);padding:22px;box-shadow:0 30px 80px -30px #000,0 0 0 1px #000 inset}
+  .screen{position:relative;height:210px;border-radius:4px;overflow:hidden;background:#050607;border:1px solid #000;box-shadow:0 0 0 2px #1b1c1f}
+  .screen canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
+  .readout{position:absolute;inset:0;display:grid;place-content:center;text-align:center;font-family:var(--mono);text-shadow:0 0 14px rgba(255,180,84,.7)}
+  .freq{font-size:clamp(2.6rem,9vw,4.6rem);color:var(--amb);letter-spacing:.06em;line-height:1;justify-self:center;padding:10px 26px;border-radius:8px;background:rgba(5,6,7,.78);box-shadow:0 0 40px 14px rgba(5,6,7,.55)}
+  .freq small{font-size:.28em;opacity:.8;margin-left:8px}
+  .msg{min-height:3.4em;margin-top:12px;padding:0 12px;color:#ffd9a0;font-size:.95rem;text-shadow:0 0 10px rgba(255,180,84,.5)}
+  .meter{display:flex;gap:4px;justify-content:center;margin-top:10px}
+  .meter b{width:14px;height:6px;background:#2a1f10;border-radius:1px;transition:background .1s}
+  .meter b.on{background:var(--amb);box-shadow:0 0 8px var(--amb)}
+  .dialwrap{margin-top:22px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;cursor:ew-resize}
+  input[type=range]::-webkit-slider-runnable-track{height:6px;background:linear-gradient(90deg,#2a1f10,#3a2a14);border-radius:3px;box-shadow:0 0 0 1px #000 inset}
+  input[type=range]::-moz-range-track{height:6px;background:#3a2a14;border-radius:3px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:38px;margin-top:-16px;border-radius:2px;background:var(--amb);box-shadow:0 0 14px var(--amb)}
+  input[type=range]::-moz-range-thumb{width:12px;height:38px;border:0;border-radius:2px;background:var(--amb);box-shadow:0 0 14px var(--amb)}
+  .scale{display:flex;justify-content:space-between;font:.7rem var(--mono);color:var(--mut);margin-top:-6px}
+  .rbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:16px}
+  .hint{color:var(--mut);font-size:.88rem}
+
+  /* kartlar */
+  .grid3{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:34px}
+  .card{padding:24px;border:1px solid var(--line);border-radius:6px;background:linear-gradient(#0e0f11,#0a0b0c)}
+  .card .n{font:700 .8rem var(--mono);color:var(--amb);letter-spacing:.2em}
+  .card h3{margin:8px 0 6px;font:700 1.15rem var(--mono);text-transform:uppercase;letter-spacing:.05em}
+  .card p{margin:0;color:#b9b2a0;font-size:.96rem;line-height:1.6}
+
+  ul.feat{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  ul.feat li{padding:14px 18px;border-left:2px solid var(--amb);background:#0b0c0e;color:#cfc8b6;font-size:.98rem}
+
+  table{width:100%;border-collapse:collapse;margin-top:26px;font-size:.96rem}
+  td{padding:12px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+  td:first-child{font:600 .8rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--amb);width:38%;padding-right:16px}
+  kbd{font:600 .8rem var(--mono);padding:2px 8px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;color:var(--amb);background:#0b0c0e}
+
+  footer{padding:60px 0 80px;text-align:center;color:var(--mut);font-size:.9rem;border-top:1px solid var(--line)}
+  .rv{opacity:0;transform:translateY(24px);transition:opacity .9s,transform .9s}
+  .rv.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<nav class="nav"><a href="/">← Tüm projeler</a><a href="#radyo">Radyo</a></nav>
+
+<header class="hero">
+  <div class="bg" role="img" aria-label="Kasım 1987, radyo başında oturan bir silüet"></div>
+  <div class="wrap">
+    <span class="badge mono"><i></i> Geliştirme aşamasında · Prototip</span>
+    <h1>Hollow<br>Signal<em>Kasım 1987</em></h1>
+    <p class="tag">Dağın tepesinde terk edilmiş bir röle istasyonu. Dışarıda kar fırtınası. Radyoya giren sesler geleceği anlatıyor; hangisine inanacağını seçmezsen sabaha çıkamazsın.</p>
+    <div class="cta">
+      <a class="btn" href="#radyo">Radyoyu dinle</a>
+      <span class="btn off">Çıkış tarihi: yakında</span>
+    </div>
+  </div>
+</header>
+
+<section id="radyo"><div class="wrap">
+  <div class="rv">
+    <span class="mono">Deneme yayını</span>
+    <h2>Frekansı çevir</h2>
+    <p class="lead">Oyundaki radyoyu küçük bir örnekle dene. Kadranı kaydır; parazitin içinde bir şeyler duyabilirsin. Her yayına inanmak iyi bir fikir olmayabilir.</p>
+  </div>
+  <div class="radio rv">
+    <div class="screen">
+      <canvas id="st" width="200" height="105"></canvas>
+      <div class="readout"><div class="freq"><span id="fq">96.4</span><small>MHz</small></div><div class="meter" id="mt"></div></div>
+    </div>
+    <div class="msg" id="msg">&nbsp;</div>
+    <div class="dialwrap">
+      <input id="dial" type="range" min="880" max="1080" step="1" value="940" aria-label="Frekans">
+      <div class="scale"><span>88</span><span>93</span><span>98</span><span>103</span><span>108</span></div>
+    </div>
+    <div class="rbar">
+      <span class="hint" id="hint">Ses kapalı. Açmak için düğmeye bas.</span>
+      <button class="btn" id="snd" type="button">🔊 Sesi aç</button>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="rv"><span class="mono">Oyun</span><h2>Dinle. Kaydet. Karar ver.</h2>
+  <p class="lead">Birinci şahıs, tek mekânlı bir psikolojik korku. Sessizlik de silah de aynı: ne kadar gürültü çıkarırsan o kadar duyulursun.</p></div>
+  <div class="grid3">
+    <div class="card rv"><div class="n">01</div><h3>Dinle</h3><p>Portatif alıcıyla frekansları tara. Yayınların kimi gerçeği söyler, kimi tuzaktır. Ama radyo açıkken sen de duyulabilirsin.</p></div>
+    <div class="card rv"><div class="n">02</div><h3>Kaydet</h3><p>Önemli yayınları sınırlı sayıda banta al. Not defterine işle, belgelerle karşılaştır, çelişkileri yakala.</p></div>
+    <div class="card rv"><div class="n">03</div><h3>Karar ver</h3><p>Sesin istediğini yap ya da yapma. Her karar geceyi ve sonunu değiştirir.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="rv"><span class="mono">Atmosfer</span><h2>Korkutan şey sessizlik</h2></div>
+  <ul class="feat rv">
+    <li>Sesle çalışan bir tehdit: seni görmez, duyar. Sessiz yürümek, saklanmak ve nefesini tutmak hayati.</li>
+    <li>Ani korkutma (jumpscare) yok. Gerilim yavaş yavaş birikir ve çekilir.</li>
+    <li>Elektrik kesilebilir; jeneratörü çalıştırmak da gürültü demek.</li>
+    <li>Radyoda Türkçe seslendirilmiş yayınlar ve altyazılar.</li>
+    <li>Tek mekân, çok katman: istasyondaki her belge ve her ses bir parça.</li>
+    <li>Birden fazla son.</li>
+  </ul>
+</div></section>
+
+<section><div class="wrap">
+  <div class="rv"><span class="mono">Bilgiler</span><h2>Oyun kartı</h2></div>
+  <table class="rv">
+    <tr><td>Tür</td><td>Psikolojik korku, birinci şahıs, tek mekân</td></tr>
+    <tr><td>Durum</td><td>Geliştirme aşamasında (oynanabilir prototip)</td></tr>
+    <tr><td>Motor</td><td>Unity 6</td></tr>
+    <tr><td>Platform</td><td>PC</td></tr>
+    <tr><td>Süre (hedef)</td><td>İlk oynanış 3–4 saat, tüm sonlar için 6–8 saat</td></tr>
+    <tr><td>Yaş</td><td>16+ (gerilim ve ölüm temaları; kan ve vahşet yok)</td></tr>
+    <tr><td>Dil</td><td>Türkçe</td></tr>
+  </table>
+  <div class="rv" style="margin-top:46px"><span class="mono">Kontroller</span>
+    <table>
+      <tr><td><kbd>W A S D</kbd> + fare</td><td>Hareket</td></tr>
+      <tr><td><kbd>Shift</kbd></td><td>Sessiz yürü</td></tr>
+      <tr><td><kbd>F</kbd></td><td>Etkileşim: kapı, şalter, belge, dolap</td></tr>
+      <tr><td><kbd>R</kbd></td><td>Radyoyu aç ya da kapat</td></tr>
+      <tr><td><kbd>Q</kbd> / <kbd>E</kbd></td><td>Frekans çevir</td></tr>
+      <tr><td><kbd>T</kbd> · <kbd>Tab</kbd></td><td>Yayını teybe al · Not defteri</td></tr>
+    </table>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <p>Hollow Signal şu an geliştirme aşamasında; içerik ve özellikler değişebilir.</p>
+  <p><a href="/">← Tüm projelere dön</a></p>
+</div></footer>
+
+<script>
+/* ---- sinyaller (sadece havayı veren kısa parçalar) ---- */
+const SIG=[
+ {f:88.8,t:'“…bugün hava kapalı, rüzgâr kuzeyden, görüş iki yüz metre…”'},
+ {f:91.2,t:'“…hâlâ orada mısın? Her şey yolunda, kapıyı açabilirsin…”'},
+ {f:94.7,t:'“…bu kayıt arşiv içindir. Tekrar ediyorum, arşiv içindir…”'},
+ {f:96.4,t:'“…beni duyuyorsan, hiçbir şeye dokunma…”'},
+ {f:99.0,t:'“…bunu daha önce de dinledin…”'},
+ {f:103.8,t:'“…yardım edin, anten… antene kimse çıkmasın…”'},
+ {f:107.1,t:'“…bir iki üç dört… saymayı bırakma…”'}
+];
+const dial=document.getElementById('dial'),fq=document.getElementById('fq'),msg=document.getElementById('msg'),mt=document.getElementById('mt');
+for(let i=0;i<10;i++)mt.appendChild(document.createElement('b'));
+const bars=[...mt.children];
+let strength=0,cur=-1,typeTimer=null,audio=null;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function typeText(t){
+  clearInterval(typeTimer);
+  if(reduce){msg.textContent=t;return}
+  msg.textContent='';let i=0;
+  typeTimer=setInterval(()=>{msg.textContent=t.slice(0,++i);if(i>=t.length)clearInterval(typeTimer)},28);
+}
+function update(){
+  const f=dial.value/10; fq.textContent=f.toFixed(1);
+  let best=0,bi=-1;
+  SIG.forEach((s,i)=>{const v=Math.max(0,1-Math.abs(f-s.f)/1.1);if(v>best){best=v;bi=i}});
+  strength=best;
+  bars.forEach((b,i)=>b.classList.toggle('on',i<Math.round(best*10)));
+  const lock=best>.82?bi:-1;
+  if(lock!==cur){cur=lock; if(lock>=0)typeText(SIG[lock].t); else {clearInterval(typeTimer);msg.innerHTML='&nbsp;'}}
+  if(audio){audio.g.gain.setTargetAtTime((1-best*.92)*.22,audio.c.currentTime,.05);audio.f.frequency.setTargetAtTime(1200+best*1800,audio.c.currentTime,.05)}
+}
+dial.addEventListener('input',update);
+
+/* ---- parazit görüntüsü ---- */
+const cv=document.getElementById('st'),cx=cv.getContext('2d'),W=cv.width,H=cv.height,img=cx.createImageData(W,H);
+function noise(){
+  const a=Math.round((1-strength*.93)*255),d=img.data;
+  for(let i=0;i<d.length;i+=4){const v=Math.random()*170;d[i]=v;d[i+1]=v*.85;d[i+2]=v*.6;d[i+3]=a}
+  cx.putImageData(img,0,0);
+}
+let raf;function loop(){noise();raf=requestAnimationFrame(loop)}
+if(reduce)noise();else loop();
+dial.addEventListener('input',()=>{if(reduce)noise()});
+document.addEventListener('visibilitychange',()=>{if(reduce)return;if(document.hidden)cancelAnimationFrame(raf);else loop()});
+
+/* ---- ses (kullanıcı isteyince) ---- */
+const snd=document.getElementById('snd'),hint=document.getElementById('hint');
+snd.onclick=()=>{
+  if(audio){audio.c.close();audio=null;snd.textContent='🔊 Sesi aç';hint.textContent='Ses kapalı. Açmak için düğmeye bas.';return}
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC){hint.textContent='Tarayıcın sesi desteklemiyor.';return}
+  const c=new AC(),n=c.sampleRate*2,buf=c.createBuffer(1,n,c.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+  const s=c.createBufferSource();s.buffer=buf;s.loop=true;
+  const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=1500;f.Q.value=.6;
+  const g=c.createGain();g.gain.value=0;
+  s.connect(f);f.connect(g);g.connect(c.destination);s.start();
+  audio={c,g,f};snd.textContent='🔇 Sesi kapat';hint.textContent='Kadranı çevir. Net bir yayın bulunca parazit azalır.';update();
+};
+
+/* ---- belirme animasyonu ---- */
+const els=document.querySelectorAll('.rv');
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+  els.forEach(e=>io.observe(e));
+}else els.forEach(e=>e.classList.add('in'));
+update();
+</script>
+</body>
+</html>
