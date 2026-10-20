@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin – Projeler</title>
+<style>
+  :root{--bg:#0e1015;--card:#171a22;--line:#262b38;--txt:#e8eaf0;--mut:#8b92a5;--acc:#6ea8fe;--bad:#ff6b6b;--ok:#4cd694}
+  @media(prefers-color-scheme:light){:root{--bg:#f5f6fa;--card:#fff;--line:#e2e5ee;--txt:#1b1e27;--mut:#657089;--acc:#2f6fed}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.5 system-ui,Segoe UI,sans-serif}
+  .wrap{max-width:900px;margin:0 auto;padding:24px 16px 64px}
+  h1{margin:0 0 4px} h2{margin:0 0 12px;font-size:1.05rem}
+  .mut{color:var(--mut)}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:16px 0}
+  label{display:block;font-size:.8rem;color:var(--mut);margin:10px 0 3px}
+  input,textarea,select{width:100%;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--txt);font:inherit}
+  .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+  @media(max-width:600px){.row{grid-template-columns:1fr}}
+  button{padding:9px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--txt);cursor:pointer;font:inherit}
+  button.p{background:var(--acc);border-color:var(--acc);color:#fff}
+  button.d{color:var(--bad)}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .item{display:flex;gap:10px;align-items:center;border-top:1px solid var(--line);padding:10px 0}
+  .item:first-child{border-top:0}
+  .item .t{flex:1;min-width:0} .item b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .em{font-size:1.5rem;width:36px;text-align:center}
+  #msg{position:sticky;top:8px;z-index:5;padding:10px 14px;border-radius:10px;display:none;margin:8px 0}
+  #msg.ok{display:block;background:var(--ok);color:#06251a} #msg.err{display:block;background:var(--bad);color:#fff}
+  .repo{cursor:pointer;padding:8px;border-radius:8px} .repo:hover{background:var(--bg)}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Proje Yönetimi</h1>
+  <div class="mut">Değişiklikler doğrudan GitHub'a commit edilir; site otomatik güncellenir.</div>
+  <div id="msg"></div>
+
+  <div class="box" id="setup">
+    <h2>🔐 Bağlantı</h2>
+    <div class="row">
+      <div><label>GitHub kullanıcı adı</label><input id="owner"></div>
+      <div><label>Repo (projects.json burada)</label><input id="repo"></div>
+      <div><label>Branch</label><input id="branch" value="main"></div>
+      <div><label>Fine-grained Token (yalnızca bu repo, Contents: Read&amp;Write)</label><input id="token" type="password" autocomplete="off"></div>
+    </div>
+    <div class="mut" style="margin-top:8px;font-size:.85rem">Token sadece bu tarayıcıda (localStorage) saklanır, sunucuya gitmez. Başkası token olmadan hiçbir şey değiştiremez.</div>
+    <div class="bar"><button class="p" id="connect">Bağlan</button><button id="forget">Bilgileri sil</button></div>
+  </div>
+
+  <div id="app" class="hide">
+    <div class="box">
+      <h2>📋 Projeler <span class="mut" id="count"></span></h2>
+      <div id="list"></div>
+    </div>
+
+    <div class="box">
+      <h2 id="ftitle">➕ Yeni proje</h2>
+      <div class="bar" style="margin:0 0 6px"><button id="pick">GitHub repolarımdan seç</button></div>
+      <div id="repos" class="hide"></div>
+      <div class="row">
+        <div><label>Başlık *</label><input id="f_title"></div>
+        <div><label>Kategori</label><input id="f_tag" list="tags" placeholder="Oyun, Uygulama…"><datalist id="tags"></datalist></div>
+        <div><label>Adres (URL) *</label><input id="f_url" placeholder="https://… veya /klasor/"></div>
+        <div><label>Emoji (görsel yoksa)</label><input id="f_emoji" placeholder="🚀"></div>
+      </div>
+      <label>Açıklama</label><textarea id="f_desc" rows="2"></textarea>
+      <label>Görsel adresi (isteğe bağlı) veya dosya yükle</label>
+      <div class="row"><input id="f_img" placeholder="img/ornek.png"><input type="file" id="f_file" accept="image/*"></div>
+      <div class="bar"><button class="p" id="save">Kaydet</button><button id="cancel" class="hide">Vazgeç</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const LS='projadmin';
+let cfg={}, data=[], sha=null, editing=-1;
+
+try{cfg=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
+const def=window.SITE||{};
+['owner','repo','branch','token'].forEach(k=>$(k).value=cfg[k]||(k!=='token'?(def[k]&&!String(def[k]).startsWith('GITHUB_')?def[k]:$(k).value):''));
+
+function msg(t,ok=true){const m=$('msg');m.textContent=t;m.className=ok?'ok':'err';clearTimeout(msg.t);msg.t=setTimeout(()=>m.className='',4500)}
+const api=(path,opt={})=>fetch('https://api.github.com'+path,{...opt,headers:{Accept:'application/vnd.github+json','Authorization':'Bearer '+cfg.token,'X-GitHub-Api-Version':'2022-11-28',...(opt.headers||{})}});
+const b64=s=>btoa(String.fromCharCode(...new TextEncoder().encode(s)));
+const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,'')),c=>c.charCodeAt(0)));
+const fileB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f)});
+const okUrl=u=>/^(https?:\/\/|\/|\.\/|[\w-]+\/)/i.test(u);
+const file=()=>def.file||'projects.json';
+
+async function connect(){
+  cfg={owner:$('owner').value.trim(),repo:$('repo').value.trim(),branch:$('branch').value.trim()||'main',token:$('token').value.trim()};
+  if(!cfg.owner||!cfg.repo||!cfg.token) return msg('Tüm alanları doldur.',false);
+  const r=await api(`/repos/${cfg.owner}/${cfg.repo}/contents/${file()}?ref=${cfg.branch}`);
+  if(r.status===404){ data=[]; sha=null; msg('projects.json yok; ilk kayıtta oluşturulacak.'); }
+  else if(r.status===401||r.status===403) return msg('Token geçersiz veya yetkisiz.',false);
+  else if(!r.ok) return msg('Bağlanılamadı: '+r.status,false);
+  else { const j=await r.json(); sha=j.sha; try{data=JSON.parse(unb64(j.content))}catch(e){return msg('projects.json bozuk.',false)} }
+  localStorage.setItem(LS,JSON.stringify(cfg));
+  $('app').classList.remove('hide'); render(); msg('Bağlandı ✔');
+}
+
+async function commit(message){
+  const body={message,content:b64(JSON.stringify(data,null,2)+'\n'),branch:cfg.branch};
+  if(sha) body.sha=sha;
+  const r=await api(`/repos/${cfg.owner}/${cfg.repo}/contents/${file()}`,{method:'PUT',body:JSON.stringify(body)});
+  if(r.status===409||r.status===422){ msg('Dosya başka yerden değişmiş. Yeniden bağlanıp tekrar dene.',false); return false }
+  if(!r.ok){ msg('Kaydedilemedi: '+r.status,false); return false }
+  sha=(await r.json()).content.sha; return true;
+}
+
+function render(){
+  $('count').textContent=`(${data.length})`;
+  $('tags').innerHTML=[...new Set(data.map(p=>p.tag).filter(Boolean))].map(t=>`<option value="${t.replace(/"/g,'&quot;')}">`).join('');
+  const l=$('list'); l.innerHTML=data.length?'':'<div class="mut">Henüz proje yok.</div>';
+  data.forEach((p,i)=>{
+    const d=document.createElement('div'); d.className='item';
+    const em=document.createElement('div'); em.className='em'; em.textContent=p.emoji||'📁';
+    const t=document.createElement('div'); t.className='t';
+    const b=document.createElement('b'); b.textContent=p.title;
+    const s=document.createElement('span'); s.className='mut'; s.textContent=(p.tag?p.tag+' · ':'')+p.url;
+    t.append(b,s);
+    d.append(em,t,
+      btn('↑',()=>move(i,-1),i===0),btn('↓',()=>move(i,1),i===data.length-1),
+      btn('Düzenle',()=>edit(i)),btn('Sil',()=>del(i),false,'d'));
+    l.appendChild(d);
+  });
+}
+function btn(txt,fn,dis,cls){const b=document.createElement('button');b.textContent=txt;b.disabled=!!dis;if(cls)b.className=cls;b.onclick=fn;return b}
+
+async function move(i,d){
+  const old=[...data]; [data[i],data[i+d]]=[data[i+d],data[i]];
+  render(); if(!await commit('Sıralama değişti')){data=old;render()}
+}
+async function del(i){
+  if(!confirm(`"${data[i].title}" silinsin mi?`)) return;
+  const old=[...data]; const name=data[i].title; data.splice(i,1); render();
+  if(await commit('Proje silindi: '+name)) msg('Silindi'); else {data=old;render()}
+}
+function edit(i){
+  editing=i; const p=data[i];
+  $('ftitle').textContent='✏️ Düzenle';
+  ['title','tag','url','emoji','desc','img'].forEach(k=>$('f_'+k).value=p[k]||'');
+  $('cancel').classList.remove('hide'); $('f_title').scrollIntoView({behavior:'smooth'});
+}
+function reset(){editing=-1;$('ftitle').textContent='➕ Yeni proje';['title','tag','url','emoji','desc','img'].forEach(k=>$('f_'+k).value='');$('f_file').value='';$('cancel').classList.add('hide')}
+
+async function save(){
+  const p={title:$('f_title').value.trim(),desc:$('f_desc').value.trim(),url:$('f_url').value.trim(),tag:$('f_tag').value.trim(),emoji:$('f_emoji').value.trim(),img:$('f_img').value.trim()};
+  if(!p.title||!p.url) return msg('Başlık ve adres zorunlu.',false);
+  if(!okUrl(p.url)) return msg('Adres http(s):// veya / ile başlamalı.',false);
+  $('save').disabled=true;
+  try{
+    const f=$('f_file').files[0];
+    if(f){
+      const name='img/'+Date.now()+'-'+f.name.replace(/[^\w.-]/g,'_');
+      const r=await api(`/repos/${cfg.owner}/${cfg.repo}/contents/${name}`,{method:'PUT',body:JSON.stringify({message:'Görsel eklendi',content:await fileB64(f),branch:cfg.branch})});
+      if(!r.ok) return msg('Görsel yüklenemedi: '+r.status,false);
+      p.img=`https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${name}`;
+    }
+    const old=[...data];
+    if(editing>=0) data[editing]=p; else data.push(p);
+    if(await commit((editing>=0?'Proje güncellendi: ':'Proje eklendi: ')+p.title)){ msg('Kaydedildi ✔'); reset(); render() } else { data=old }
+  } finally { $('save').disabled=false }
+}
+
+async function pickRepos(){
+  const box=$('repos'); box.classList.toggle('hide'); if(box.classList.contains('hide')) return;
+  box.textContent='Yükleniyor…';
+  const r=await api('/user/repos?per_page=100&sort=pushed&affiliation=owner');
+  if(!r.ok){box.textContent='';return msg('Repolar alınamadı (token yetkisi gerekebilir: Metadata Read).',false)}
+  const repos=await r.json(); box.innerHTML='';
+  repos.filter(x=>!x.fork).forEach(x=>{
+    const d=document.createElement('div'); d.className='repo';
+    d.textContent=`${x.private?'🔒 ':''}${x.name}${x.description?' — '+x.description:''}`;
+    d.onclick=()=>{
+      $('f_title').value=x.name; $('f_desc').value=x.description||'';
+      $('f_url').value=x.homepage&&okUrl(x.homepage)?x.homepage:x.html_url;
+      $('f_tag').value=x.language||''; box.classList.add('hide'); $('f_title').scrollIntoView({behavior:'smooth'});
+    };
+    box.appendChild(d);
+  });
+}
+
+$('connect').onclick=connect; $('save').onclick=save; $('cancel').onclick=reset; $('pick').onclick=pickRepos;
+$('forget').onclick=()=>{localStorage.removeItem(LS);$('token').value='';$('app').classList.add('hide');msg('Bilgiler silindi')};
+if(cfg.token&&cfg.owner&&cfg.repo) connect();
+</script>
+</body>
+</html>
