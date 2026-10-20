@@ -49,5 +49,22 @@
     "video": "",
     "subtitle": "",
     "updated": "2026-10-20"
+  },
+  {
+    "title": "Oyun Stüdyosu",
+    "type": "uygulama",
+    "tag": "C#",
+    "desc": "",
+    "emoji": "📱",
+    "url": "https://github.com/Cqxet/game-studio-combined",
+    "repo": "https://github.com/Cqxet/game-studio-combined",
+    "updated": "2026-10-08",
+    "icon": "",
+    "img": "",
+    "video": "",
+    "subtitle": "",
+    "demo": "",
+    "download": "",
+    "version": ""
   }
 ]
