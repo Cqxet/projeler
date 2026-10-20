@@ -28,6 +28,15 @@
   .empty{grid-column:1/-1;color:var(--mut);text-align:center;padding:40px}
   footer{text-align:center;color:var(--mut);padding:0 16px 32px;font-size:.85rem}
 
+  .thumb{position:relative}
+  .thumb .badge{position:absolute;top:10px;left:10px;font-size:.72rem;padding:3px 10px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;backdrop-filter:blur(4px)}
+  .thumb .ic{position:absolute;left:12px;bottom:-18px;width:46px;height:46px;border-radius:12px;object-fit:cover;background:var(--card);border:2px solid var(--card);box-shadow:0 2px 8px rgba(0,0,0,.35)}
+  a.card{overflow:visible}
+  .thumb{border-radius:14px 14px 0 0;overflow:visible}
+  .thumb img:not(.ic){border-radius:14px 14px 0 0}
+  a.card .body{padding-top:26px}
+  .upd{margin-top:10px;font-size:.8rem;color:var(--mut)}
+  .meta{color:var(--acc);font-size:.85rem;margin-bottom:8px}
   #modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
   #modal.on{display:flex}
   .mbox{background:var(--card);border:1px solid var(--line);border-radius:16px;width:min(900px,100%);max-height:92vh;overflow:auto}
@@ -57,8 +66,10 @@
     <div class="tabs" id="mtabs"></div>
     <div class="mmedia" id="mmedia"></div>
     <div class="mtext">
-      <h2 id="mtitle"></h2><p id="mdesc"></p>
+      <h2 id="mtitle"></h2><div class="meta" id="mmeta"></div><p id="mdesc"></p>
       <a class="mbtn" id="mopen" target="_blank" rel="noopener">Projeyi aç</a>
+      <a class="mbtn g" id="mrepo" target="_blank" rel="noopener">GitHub</a>
+      <a class="mbtn g" id="mdl" target="_blank" rel="noopener">⬇ İndir</a>
       <button class="mbtn g" id="mclose">Kapat</button>
     </div>
   </div>
@@ -86,12 +97,23 @@ function embedUrl(u){
   if(/^https?:\/\//i.test(u)) return {t:'iframe',src:u};
   return null;
 }
+const TYPES={oyun:'Oyun',uygulama:'Uygulama'};
+const cat=p=>TYPES[p.type]||p.tag||'';
+function fmtDate(d){const x=new Date(d);return isNaN(x)?'':x.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})}
+function ago(d){
+  const x=new Date(d); if(isNaN(x)) return '';
+  const n=Math.floor((Date.now()-x)/864e5);
+  if(n<=0) return 'bugün'; if(n===1) return 'dün'; if(n<7) return n+' gün önce';
+  if(n<30) return Math.floor(n/7)+' hafta önce'; if(n<365) return Math.floor(n/30)+' ay önce';
+  return Math.floor(n/365)+' yıl önce';
+}
 const modal=document.getElementById('modal'), mmedia=document.getElementById('mmedia'), mtabs=document.getElementById('mtabs');
 function showMedia(kind,p){
   mmedia.innerHTML='';
   const e=embedUrl(kind==='demo'?p.demo:p.video); if(!e){mmedia.textContent='';return}
   let el;
-  if(e.t==='video'){el=document.createElement('video');el.controls=true;el.preload='metadata';el.src=e.src;if(p.img)el.poster=p.img}
+  if(e.t==='video'){el=document.createElement('video');el.controls=true;el.preload='metadata';el.src=e.src;if(p.img)el.poster=p.img;
+    if(p.subtitle&&safeUrl(p.subtitle)!=='#'){const t=document.createElement('track');t.kind='subtitles';t.label='Türkçe';t.srclang='tr';t.src=p.subtitle;t.default=true;el.appendChild(t)}}
   else{el=document.createElement('iframe');el.src=e.src;el.allowFullscreen=true;el.loading='lazy';
        el.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
        if(kind==='demo'){el.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-popups')}
@@ -103,6 +125,9 @@ function openModal(p){
   document.getElementById('mtitle').textContent=p.title;
   document.getElementById('mdesc').textContent=p.desc||'';
   const o=document.getElementById('mopen'); o.href=safeUrl(p.url); o.style.display=p.url?'':'none';
+  const rp=document.getElementById('mrepo'); rp.href=safeUrl(p.repo); rp.style.display=p.repo?'':'none';
+  const dl=document.getElementById('mdl'); dl.href=safeUrl(p.download); dl.style.display=p.download?'':'none';
+  document.getElementById('mmeta').textContent=[cat(p),p.version&&('v'+p.version),p.updated&&('Güncellendi: '+fmtDate(p.updated)+' ('+ago(p.updated)+')')].filter(Boolean).join(' · ');
   mtabs.innerHTML='';
   const kinds=[p.video&&['video','▶ Video'],p.demo&&['demo','🖥 Canlı deneme']].filter(Boolean);
   kinds.forEach(([k,label])=>{const b=document.createElement('button');b.className='tag';b.textContent=label;b.dataset.k=k;b.onclick=()=>showMedia(k,p);mtabs.appendChild(b)});
@@ -129,22 +154,25 @@ function renderTags(){
 }
 function render(){
   const s=q.value.toLowerCase();
-  const list=projects.filter(p=>(!active||p.tag===active)&&(p.title+p.desc).toLowerCase().includes(s));
+  const list=projects.filter(p=>(!active||cat(p)===active)&&((p.title||'')+(p.desc||'')+(p.tag||'')).toLowerCase().includes(s));
   grid.innerHTML=list.length?'':'<div class="empty">Sonuç yok.</div>';
   list.forEach(p=>{
     const a=document.createElement('a');a.className='card';a.href=safeUrl(p.url);
     if(p.video||p.demo) a.onclick=e=>{e.preventDefault();openModal(p)};
     const th=document.createElement('div');th.className='thumb';
-    if(p.img){const i=document.createElement('img');i.src=p.img;i.alt=p.title;th.appendChild(i)}else th.textContent=p.emoji||'📁';
+    if(p.img&&safeUrl(p.img)!=='#'){const i=document.createElement('img');i.src=p.img;i.alt=p.title;i.loading='lazy';th.appendChild(i)}else th.append(p.emoji||'📁');
+    if(cat(p)){const bd=document.createElement('span');bd.className='badge';bd.textContent=cat(p);th.appendChild(bd)}
+    if(p.icon&&safeUrl(p.icon)!=='#'){const ic=document.createElement('img');ic.className='ic';ic.src=p.icon;ic.alt='';th.appendChild(ic)}
     const b=document.createElement('div');b.className='body';
     const h=document.createElement('h2');h.textContent=p.title;
-    const d=document.createElement('p');d.textContent=p.desc;
-    const c=document.createElement('span');c.className='chip';c.textContent=p.tag||'';
-    b.append(h,d,c);a.append(th,b);grid.appendChild(a);
+    const d=document.createElement('p');d.textContent=p.desc||'';
+    const u=document.createElement('div');u.className='upd';
+    if(p.updated&&fmtDate(p.updated)){u.textContent='🕒 Güncellendi: '+fmtDate(p.updated)+' · '+ago(p.updated);u.title=fmtDate(p.updated)}
+    b.append(h,d,u);a.append(th,b);grid.appendChild(a);
   });
 }
 q.oninput=render;
-load().then(d=>{projects=d;tags=[...new Set(d.map(p=>p.tag).filter(Boolean))];renderTags();render()}).catch(()=>{grid.innerHTML='<div class="empty">Projeler yüklenemedi.</div>'});
+load().then(d=>{projects=d;tags=[...new Set(d.map(cat).filter(Boolean))];renderTags();render()}).catch(()=>{grid.innerHTML='<div class="empty">Projeler yüklenemedi.</div>'});
 </script>
 </body>
 </html>

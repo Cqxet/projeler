@@ -6,211 +6,343 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Admin – Projeler</title>
 <style>
-  :root{--bg:#0e1015;--card:#171a22;--line:#262b38;--txt:#e8eaf0;--mut:#8b92a5;--acc:#6ea8fe;--bad:#ff6b6b;--ok:#4cd694}
-  @media(prefers-color-scheme:light){:root{--bg:#f5f6fa;--card:#fff;--line:#e2e5ee;--txt:#1b1e27;--mut:#657089;--acc:#2f6fed}}
+  :root{--bg:#0d0f14;--card:#161922;--card2:#1c202b;--line:#272c3a;--txt:#e9ebf2;--mut:#8d95aa;--acc:#6ea8fe;--acc2:#8e5cf7;--bad:#ff6b6b;--ok:#4cd694;--r:14px}
+  @media(prefers-color-scheme:light){:root{--bg:#f3f5fa;--card:#fff;--card2:#f7f8fc;--line:#e1e5ef;--txt:#1b1e27;--mut:#66708a;--acc:#2f6fed;--acc2:#7a4de0}}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.5 system-ui,Segoe UI,sans-serif}
-  .wrap{max-width:900px;margin:0 auto;padding:24px 16px 64px}
-  h1{margin:0 0 4px} h2{margin:0 0 12px;font-size:1.05rem}
-  .mut{color:var(--mut)}
-  .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:16px 0}
-  label{display:block;font-size:.8rem;color:var(--mut);margin:10px 0 3px}
-  input,textarea,select{width:100%;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--txt);font:inherit}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 16px}
+  .top{border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:20}
+  .topin{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:12px 16px;flex-wrap:wrap}
+  h1{margin:0;font-size:1.25rem} h2{margin:0 0 12px;font-size:1.05rem}
+  .mut{color:var(--mut)} .sm{font-size:.82rem}
+  .stats{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{padding:4px 12px;border-radius:999px;background:var(--card2);border:1px solid var(--line);font-size:.82rem;color:var(--mut)}
+  .pill b{color:var(--txt)}
+  nav.tabs{display:flex;gap:6px;margin:18px 0;flex-wrap:wrap}
+  nav.tabs button{padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--mut);cursor:pointer;font:inherit}
+  nav.tabs button.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border-color:transparent}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:0 0 16px}
+  label{display:block;font-size:.8rem;color:var(--mut);margin:12px 0 4px}
+  input[type=text],input[type=date],input[type=search],textarea,select{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--txt);font:inherit}
+  input:focus,textarea:focus,select:focus{outline:2px solid var(--acc);outline-offset:0}
   .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
-  @media(max-width:600px){.row{grid-template-columns:1fr}}
-  button{padding:9px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--txt);cursor:pointer;font:inherit}
-  button.p{background:var(--acc);border-color:var(--acc);color:#fff}
-  button.d{color:var(--bad)}
-  button:disabled{opacity:.5;cursor:not-allowed}
-  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-  .item{display:flex;gap:10px;align-items:center;border-top:1px solid var(--line);padding:10px 0}
-  .item:first-child{border-top:0}
-  .item .t{flex:1;min-width:0} .item b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .em{font-size:1.5rem;width:36px;text-align:center}
-  #msg{position:sticky;top:8px;z-index:5;padding:10px 14px;border-radius:10px;display:none;margin:8px 0}
+  .row3{display:grid;gap:12px;grid-template-columns:repeat(3,1fr)}
+  @media(max-width:700px){.row,.row3{grid-template-columns:1fr}}
+  button,.btn{padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--txt);cursor:pointer;font:inherit;text-decoration:none;display:inline-block}
+  button:hover,.btn:hover{border-color:var(--acc)}
+  button.p{background:linear-gradient(135deg,var(--acc),var(--acc2));border-color:transparent;color:#fff}
+  button.d{color:var(--bad)} button.s{padding:5px 10px;font-size:.85rem}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  #msg{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:60;padding:11px 18px;border-radius:12px;display:none;max-width:92vw;box-shadow:0 8px 30px rgba(0,0,0,.35)}
   #msg.ok{display:block;background:var(--ok);color:#06251a} #msg.err{display:block;background:var(--bad);color:#fff}
-  .repo{cursor:pointer;padding:8px;border-radius:8px} .repo:hover{background:var(--bg)}
-  .hide{display:none}
+  .tool{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .tool input{flex:1;min-width:200px}
+  .chip{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--mut);cursor:pointer;font:inherit}
+  .chip.on{color:var(--acc);border-color:var(--acc)}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .pc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+  .pc .th{aspect-ratio:16/8;background:linear-gradient(135deg,var(--acc),var(--acc2));display:grid;place-items:center;font-size:2.2rem;color:#fff;position:relative}
+  .pc .th{overflow:visible}
+  .pc .th img.cv{width:100%;height:100%;object-fit:cover}
+  .pc .ic{position:absolute;left:10px;bottom:-16px;width:44px;height:44px;border-radius:12px;background:var(--card);border:2px solid var(--card);object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+  .pc .bd{padding:22px 14px 12px;flex:1}
+  .pc h3{margin:0;font-size:1rem}
+  .badge{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:999px;background:var(--card2);border:1px solid var(--line);color:var(--acc);margin-right:6px}
+  .pc .ft{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 14px}
+  .empty{color:var(--mut);padding:36px;text-align:center;border:1px dashed var(--line);border-radius:var(--r)}
+  .seg{display:flex;gap:8px}
+  .seg label{margin:0;flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px;cursor:pointer;color:var(--txt);font-size:.95rem;background:var(--bg)}
+  .seg input{display:none} .seg label:has(input:checked){border-color:var(--acc);background:var(--card2);color:var(--acc)}
+  .asset{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:start;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card2);margin-top:10px}
+  .pv{width:96px;height:72px;border-radius:10px;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;font-size:1.6rem;color:var(--mut)}
+  .pv img,.pv video{width:100%;height:100%;object-fit:cover}
+  .asset .ctl{display:grid;gap:6px}
+  .asset .nm{font-size:.82rem;color:var(--mut);word-break:break-all}
+  .repo{display:grid;grid-template-columns:auto 1fr 200px;gap:10px;align-items:center;padding:10px 4px;border-top:1px solid var(--line)}
+  .repo:first-child{border-top:0}
+  @media(max-width:700px){.repo{grid-template-columns:auto 1fr}.repo input[type=text]{grid-column:1/-1}}
+  .repo input[type=checkbox]{width:18px;height:18px}
+  [hidden]{display:none!important}
 </style>
 </head>
 <body>
+<div class="top"><div class="wrap topin">
+  <div><h1>⚙️ Proje Yönetimi</h1><div class="mut sm" id="sub">Bağlanıyor…</div></div>
+  <div class="stats" id="stats"></div>
+  <a class="btn" href="/" target="_blank" rel="noopener">Siteyi aç ↗</a>
+</div></div>
+
 <div class="wrap">
-  <h1>Proje Yönetimi</h1>
-  <div class="mut">Değişiklikler doğrudan GitHub'a commit edilir; site otomatik güncellenir.</div>
   <div id="msg"></div>
+  <nav class="tabs" id="tabs">
+    <button data-t="list" class="on">📋 Projeler</button>
+    <button data-t="edit">✏️ Ekle / Düzenle</button>
+    <button data-t="gh">🐙 GitHub'dan içe aktar</button>
+  </nav>
 
-  <div id="app" class="hide">
-    <div class="box">
-      <h2>📋 Projeler <span class="mut" id="count"></span></h2>
-      <div id="list"></div>
+  <section id="t_list">
+    <div class="tool">
+      <input type="search" id="q" placeholder="Proje ara…">
+      <span id="chips"></span>
+      <button class="p" id="new">➕ Yeni proje</button>
     </div>
+    <div class="grid" id="list"></div>
+  </section>
 
-    <div class="box">
-      <h2>🐙 GitHub'dan hangi projeyi eklemek istersin?</h2>
-      <div id="repos" class="mut">Yükleniyor…</div>
-      <div class="bar"><button class="p" id="addSel">Seçilenleri ekle</button><button id="reload">Listeyi yenile</button></div>
-    </div>
-
+  <section id="t_edit" hidden>
     <div class="box">
       <h2 id="ftitle">➕ Yeni proje</h2>
-      <div class="row">
-        <div><label>Başlık *</label><input id="f_title"></div>
-        <div><label>Kategori</label><input id="f_tag" list="tags" placeholder="Oyun, Uygulama…"><datalist id="tags"></datalist></div>
-        <div><label>Adres (URL) *</label><input id="f_url" placeholder="https://… veya /klasor/"></div>
-        <div><label>Emoji (görsel yoksa)</label><input id="f_emoji" placeholder="🚀"></div>
+      <label>Tür</label>
+      <div class="seg">
+        <label><input type="radio" name="ftype" value="oyun" checked>🎮 Oyun</label>
+        <label><input type="radio" name="ftype" value="uygulama">📱 Uygulama</label>
       </div>
-      <label>Açıklama</label><textarea id="f_desc" rows="2"></textarea>
-      <label>Görsel adresi (isteğe bağlı) veya dosya yükle</label>
-      <div class="row"><input id="f_img" placeholder="img/ornek.png"><input type="file" id="f_file" accept="image/*"></div>
-      <label>Video: YouTube/Vimeo linki, .mp4 adresi veya dosya yükle (en fazla ~25 MB; büyükse YouTube kullan)</label>
-      <div class="row"><input id="f_video" placeholder="https://youtu.be/… veya videos/demo.mp4"><input type="file" id="f_vfile" accept="video/mp4,video/webm"></div>
-      <label>Canlı deneme / arayüz adresi (iframe ile gösterilir, isteğe bağlı)</label>
-      <input id="f_demo" placeholder="https://proje.vercel.app">
-      <div class="bar"><button class="p" id="save">Kaydet</button><button id="cancel" class="hide">Vazgeç</button></div>
+      <div class="row">
+        <div><label>Görünen ad * <span class="sm">(GitHub'daki repo adından bağımsız)</span></label><input type="text" id="f_title"></div>
+        <div><label>Kategori / etiket</label><input type="text" id="f_tag" list="taglist" placeholder="Aksiyon, CAD, Araç…"><datalist id="taglist"></datalist></div>
+      </div>
+      <label>Açıklama</label><textarea id="f_desc" rows="3"></textarea>
+      <div class="row3">
+        <div><label>Emoji (görsel yoksa)</label><input type="text" id="f_emoji" placeholder="🚀"></div>
+        <div><label>Sürüm</label><input type="text" id="f_version" placeholder="1.0.0"></div>
+        <div><label>Son güncelleme tarihi</label><input type="date" id="f_updated"></div>
+      </div>
+      <label style="display:flex;gap:8px;align-items:center;color:var(--txt)"><input type="checkbox" id="f_touch" checked style="width:auto"> Kaydederken güncelleme tarihini bugün yap</label>
     </div>
-  </div>
+
+    <div class="box">
+      <h2>🖼️ Görseller ve medya</h2>
+      <div class="mut sm">Dosya yükle ya da adres yapıştır. Dosyalar sitenin <code>/uploads</code> klasörüne kaydolur ve sitede yaklaşık 1 dakika sonra görünür. Dosya başına en fazla 3 MB (görseller otomatik küçültülür).</div>
+      <div id="assets"></div>
+    </div>
+
+    <div class="box">
+      <h2>🔗 Bağlantılar</h2>
+      <div class="row">
+        <div><label>Proje adresi *</label><input type="text" id="f_url" placeholder="https://… veya /klasor/"></div>
+        <div><label>Canlı deneme (iframe)</label><input type="text" id="f_demo" placeholder="https://proje.vercel.app"></div>
+        <div><label>GitHub repo adresi</label><input type="text" id="f_repo" placeholder="https://github.com/…"></div>
+        <div><label>İndirme adresi</label><input type="text" id="f_download" placeholder="https://…/releases/…"></div>
+      </div>
+      <div class="bar">
+        <button class="p" id="save">💾 Kaydet</button>
+        <button id="cancel">Vazgeç</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="t_gh" hidden>
+    <div class="box">
+      <h2>🐙 GitHub'dan hangi projeyi eklemek istersin?</h2>
+      <div class="mut sm">Görünen adı burada değiştirebilirsin; GitHub'daki repo adı değişmez.</div>
+      <div class="row" style="margin:12px 0">
+        <div><label>Eklenecekler hangi tür?</label>
+          <select id="imp_type"><option value="oyun">🎮 Oyun</option><option value="uygulama">📱 Uygulama</option></select></div>
+        <div style="align-self:end"><button id="reload">🔄 Listeyi yenile</button></div>
+      </div>
+      <div id="repos" class="mut">Yükleniyor…</div>
+      <div class="bar"><button class="p" id="addSel">Seçilenleri ekle</button></div>
+    </div>
+  </section>
 </div>
 
 <script src="/config.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-const LS='projadmin';
-let cfg={}, data=[], sha=null, editing=-1, repoList=[];
+const h=(t,p={},...c)=>{const e=document.createElement(t);
+  for(const [k,v] of Object.entries(p||{})){ if(k==='class')e.className=v; else if(k.startsWith('on'))e[k]=v; else if(k==='text')e.textContent=v; else if(v!==false&&v!=null)e.setAttribute(k,v===true?'':v) }
+  c.flat().filter(x=>x!=null&&x!==false).forEach(x=>e.append(x)); return e};
+const TYPES={oyun:'Oyun',uygulama:'Uygulama'}, EMO={oyun:'🎮',uygulama:'📱'};
+const def=window.SITE||{}, file=()=>def.file||'public/projects.json';
+const okUrl=u=>/^(https?:\/\/|\/|\.\/|[\w-]+\/)/i.test(u||'');
+const today=()=>new Date().toLocaleDateString('sv-SE');
+const MAX=3*1024*1024;
+let cfg={}, data=[], sha=null, editing=-1, pend={}, repoList=[], filt={q:'',type:''};
 
-try{cfg=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
-const def=window.SITE||{};
-
-function msg(t,ok=true){const m=$('msg');m.textContent=t;m.className=ok?'ok':'err';clearTimeout(msg.t);msg.t=setTimeout(()=>m.className='',4500)}
+/* ---------- yardımcılar ---------- */
+function msg(t,ok=true){const m=$('msg');m.textContent=t;m.className=ok?'ok':'err';clearTimeout(msg.t);msg.t=setTimeout(()=>m.className='',5000)}
 const api=(path,opt={})=>fetch('/api/gh?path='+encodeURIComponent(path),{...opt,headers:{'Content-Type':'application/json'}});
 const b64=s=>btoa(String.fromCharCode(...new TextEncoder().encode(s)));
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,'')),c=>c.charCodeAt(0)));
-const fileB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f)});
-const okUrl=u=>/^(https?:\/\/|\/|\.\/|[\w-]+\/)/i.test(u);
-const file=()=>def.file||'projects.json';
+const blobB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f)});
+function show(t){
+  ['list','edit','gh'].forEach(k=>$('t_'+k).hidden=k!==t);
+  [...$('tabs').children].forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  scrollTo({top:0,behavior:'smooth'});
+}
+async function shrink(file,max,q){
+  if(!/^image\/(png|jpe?g|webp)$/.test(file.type)) return file;
+  const bmp=await createImageBitmap(file); const k=Math.min(1,max/Math.max(bmp.width,bmp.height));
+  const c=document.createElement('canvas'); c.width=Math.round(bmp.width*k); c.height=Math.round(bmp.height*k);
+  c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+  return await new Promise(r=>c.toBlob(b=>r(b||file),'image/webp',q));
+}
+function srt2vtt(t){return t.trim().startsWith('WEBVTT')?t:'WEBVTT\n\n'+t.replace(/\r/g,'').replace(/(\d+:\d+:\d+),(\d+)/g,'$1.$2')}
 
+/* ---------- bağlantı / kayıt ---------- */
 async function connect(){
   cfg={owner:def.owner,repo:def.repo,branch:def.branch||'main'};
   const r=await api(`/repos/${cfg.owner}/${cfg.repo}/contents/${file()}?ref=${cfg.branch}`);
-  if(r.status===404){ data=[]; sha=null; msg('projects.json yok; ilk kayıtta oluşturulacak.'); }
+  if(r.status===404){data=[];sha=null;msg('projects.json yok; ilk kayıtta oluşturulacak.')}
   else if(!r.ok){
-    let t=''; try{t=(await r.text()).slice(0,200)}catch(e){}
+    let t='';try{t=(await r.text()).slice(0,200)}catch(e){}
     const why=r.status===401?(t.includes('Giris')?'Giriş şifresi geçersiz (sayfayı yenile).':'GitHub token geçersiz veya süresi dolmuş (Vercel GITHUB_TOKEN).')
-      :r.status===403?(t.includes('Yasak')?'GH_OWNER / GH_REPO Vercel ayarı config.js ile uyuşmuyor.':'GitHub token bu repoya yetkili değil (Contents: Read and write).')
+      :r.status===403?(t.includes('Yasak')?'GH_OWNER / GH_REPO Vercel ayarı uyuşmuyor.':'GitHub token bu repoya yetkili değil (Contents: Read and write).')
       :r.status===503?'Vercel ortam değişkenleri eksik (GITHUB_TOKEN, GH_OWNER, GH_REPO).':'Bağlanılamadı.';
-    return msg(why+' ['+r.status+'] '+t.replace(/\s+/g,' ').slice(0,120),false)
-  }
-  else { const j=await r.json(); sha=j.sha; try{data=JSON.parse(unb64(j.content))}catch(e){return msg('projects.json bozuk.',false)} }
-  $('app').classList.remove('hide'); render(); msg('Bağlandı ✔'); pickRepos();
+    $('sub').textContent='Bağlantı hatası'; return msg(why+' ['+r.status+'] '+t.replace(/\s+/g,' ').slice(0,120),false);
+  } else {const j=await r.json();sha=j.sha;try{data=JSON.parse(unb64(j.content))}catch(e){return msg('projects.json bozuk.',false)}}
+  $('sub').textContent=`${cfg.owner}/${cfg.repo} · ${cfg.branch} deposuna bağlı`;
+  render(); pickRepos();
 }
-
 async function commit(message){
   const body={message,content:b64(JSON.stringify(data,null,2)+'\n'),branch:cfg.branch};
   if(sha) body.sha=sha;
   const r=await api(`/repos/${cfg.owner}/${cfg.repo}/contents/${file()}`,{method:'PUT',body:JSON.stringify(body)});
-  if(r.status===409||r.status===422){ msg('Dosya başka yerden değişmiş. Yeniden bağlanıp tekrar dene.',false); return false }
-  if(!r.ok){ msg('Kaydedilemedi: '+r.status,false); return false }
-  sha=(await r.json()).content.sha; return true;
+  if(r.status===409||r.status===422){msg('Dosya başka yerden değişmiş. Sayfayı yenileyip tekrar dene.',false);return false}
+  if(!r.ok){msg('Kaydedilemedi: '+r.status,false);return false}
+  sha=(await r.json()).content.sha;return true;
+}
+async function upload(folder,blob,name){
+  if(blob.size>MAX) throw new Error(name+": dosya 3 MB'dan büyük");
+  const path='public/uploads/'+folder+'/'+Date.now()+'-'+name.replace(/[^\w.-]/g,'_');
+  const r=await api(`/repos/${cfg.owner}/${cfg.repo}/contents/${path}`,{method:'PUT',body:JSON.stringify({message:'Dosya yüklendi: '+name,content:await blobB64(blob),branch:cfg.branch})});
+  if(!r.ok) throw new Error(name+': yüklenemedi ('+r.status+')');
+  return '/'+path.replace(/^public\//,'');
 }
 
+/* ---------- liste ---------- */
 function render(){
-  $('count').textContent=`(${data.length})`;
-  $('tags').innerHTML=[...new Set(data.map(p=>p.tag).filter(Boolean))].map(t=>`<option value="${t.replace(/"/g,'&quot;')}">`).join('');
-  const l=$('list'); l.innerHTML=data.length?'':'<div class="mut">Henüz proje yok.</div>';
-  data.forEach((p,i)=>{
-    const d=document.createElement('div'); d.className='item';
-    const em=document.createElement('div'); em.className='em'; em.textContent=p.emoji||'📁';
-    const t=document.createElement('div'); t.className='t';
-    const b=document.createElement('b'); b.textContent=p.title;
-    const s=document.createElement('span'); s.className='mut'; s.textContent=(p.tag?p.tag+' · ':'')+p.url;
-    t.append(b,s);
-    d.append(em,t,
-      btn('↑',()=>move(i,-1),i===0),btn('↓',()=>move(i,1),i===data.length-1),
-      btn('Düzenle',()=>edit(i)),btn('Sil',()=>del(i),false,'d'));
-    l.appendChild(d);
-  });
+  const n=t=>data.filter(p=>p.type===t).length;
+  $('stats').replaceChildren(h('span',{class:'pill'},h('b',{text:data.length}),' proje'),h('span',{class:'pill'},h('b',{text:n('oyun')}),' oyun'),h('span',{class:'pill'},h('b',{text:n('uygulama')}),' uygulama'));
+  $('taglist').replaceChildren(...[...new Set(data.map(p=>p.tag).filter(Boolean))].map(t=>h('option',{value:t})));
+  $('chips').replaceChildren(...[['','Tümü'],['oyun','Oyun'],['uygulama','Uygulama']].map(([v,l])=>h('button',{class:'chip'+(filt.type===v?' on':''),text:l,onclick:()=>{filt.type=v;render()}})));
+  const s=filt.q.toLowerCase();
+  const rows=data.map((p,i)=>({p,i})).filter(({p})=>(!filt.type||p.type===filt.type)&&((p.title||'')+(p.desc||'')+(p.tag||'')).toLowerCase().includes(s));
+  const canMove=!filt.type&&!s;
+  $('list').replaceChildren(...(rows.length?rows.map(({p,i})=>card(p,i,canMove)):[h('div',{class:'empty',style:'grid-column:1/-1',text:'Gösterilecek proje yok.'})]));
 }
-function btn(txt,fn,dis,cls){const b=document.createElement('button');b.textContent=txt;b.disabled=!!dis;if(cls)b.className=cls;b.onclick=fn;return b}
-
-async function move(i,d){
-  const old=[...data]; [data[i],data[i+d]]=[data[i+d],data[i]];
-  render(); if(!await commit('Sıralama değişti')){data=old;render()}
+function card(p,i,canMove){
+  const th=h('div',{class:'th'},p.img?h('img',{class:'cv',src:p.img,alt:''}):(p.emoji||EMO[p.type]||'📁'),p.icon?h('img',{class:'ic',src:p.icon,alt:''}):null);
+  return h('div',{class:'pc'},th,
+    h('div',{class:'bd'},h('h3',{text:p.title}),
+      h('div',{style:'margin:4px 0'},p.type?h('span',{class:'badge',text:TYPES[p.type]}):null,p.tag?h('span',{class:'badge',text:p.tag}):null),
+      h('div',{class:'mut sm',text:(p.desc||'').slice(0,90)}),
+      h('div',{class:'mut sm',style:'margin-top:6px',text:p.updated?'Güncellendi: '+p.updated:'Tarih yok'})),
+    h('div',{class:'ft'},
+      h('button',{class:'s',text:'↑',disabled:!canMove||i===0,onclick:()=>move(i,-1)}),
+      h('button',{class:'s',text:'↓',disabled:!canMove||i===data.length-1,onclick:()=>move(i,1)}),
+      h('button',{class:'s',text:'✏️ Düzenle',onclick:()=>edit(i)}),
+      h('button',{class:'s d',text:'🗑 Sil',onclick:()=>del(i)})));
 }
+async function move(i,d){const old=[...data];[data[i],data[i+d]]=[data[i+d],data[i]];render();if(!await commit('Sıralama değişti')){data=old;render()}}
 async function del(i){
-  if(!confirm(`"${data[i].title}" silinsin mi?`)) return;
-  const old=[...data]; const name=data[i].title; data.splice(i,1); render();
-  if(await commit('Proje silindi: '+name)) msg('Silindi'); else {data=old;render()}
+  if(!confirm('"'+data[i].title+'" listeden silinsin mi? (GitHub reposu etkilenmez)'))return;
+  const old=[...data],name=data[i].title;data.splice(i,1);render();
+  if(await commit('Proje silindi: '+name))msg('Silindi');else{data=old;render()}
 }
-function edit(i){
-  editing=i; const p=data[i];
-  $('ftitle').textContent='✏️ Düzenle';
-  ['title','tag','url','emoji','desc','img','video','demo'].forEach(k=>$('f_'+k).value=p[k]||'');
-  $('cancel').classList.remove('hide'); $('f_title').scrollIntoView({behavior:'smooth'});
+
+/* ---------- düzenleme formu ---------- */
+const ASSETS=[
+  {k:'icon',label:'İkon',folder:'icons',accept:'image/*',hint:"Kare, küçük logo (256 px'e küçültülür)"},
+  {k:'img',label:'Kapak görseli',folder:'images',accept:'image/*',hint:"Kartta ve pencerede görünür (1280 px'e küçültülür)"},
+  {k:'video',label:'Video',folder:'videos',accept:'video/mp4,video/webm',hint:'YouTube/Vimeo linki yapıştır. Dosya yüklemek için 3 MB sınırı var; büyük video için YouTube kullan.'},
+  {k:'subtitle',label:'Altyazı (video için)',folder:'subs',accept:'.vtt,.srt',hint:'.vtt ya da .srt; sadece yüklenen mp4 videoda çalışır.'}
+];
+function buildAssets(){
+  $('assets').replaceChildren(...ASSETS.map(a=>h('div',{class:'asset',id:'as_'+a.k},
+    h('div',{class:'pv',id:'pv_'+a.k}),
+    h('div',{class:'ctl'},
+      h('b',{text:a.label}),
+      h('input',{type:'text',id:'a_'+a.k,placeholder:'Adres yapıştır…',oninput:()=>previewAsset(a.k)}),
+      h('input',{type:'file',id:'fi_'+a.k,accept:a.accept,onchange:e=>{pend[a.k]=e.target.files[0]||null;previewAsset(a.k)}}),
+      h('div',{class:'nm',id:'nm_'+a.k,text:a.hint}),
+      h('div',null,h('button',{class:'s d',text:'Kaldır',onclick:()=>{pend[a.k]=null;$('fi_'+a.k).value='';$('a_'+a.k).value='';previewAsset(a.k)}}))))));
 }
-function reset(){editing=-1;$('ftitle').textContent='➕ Yeni proje';['title','tag','url','emoji','desc','img','video','demo'].forEach(k=>$('f_'+k).value='');$('f_file').value='';$('f_vfile').value='';$('cancel').classList.add('hide')}
+function previewAsset(k){
+  const pv=$('pv_'+k),f=pend[k],v=$('a_'+k).value.trim(),a=ASSETS.find(x=>x.k===k);
+  const src=f?URL.createObjectURL(f):v;
+  if(!src){pv.replaceChildren(document.createTextNode('—'));$('nm_'+k).textContent=a.hint;return}
+  $('nm_'+k).textContent=f?'Yüklenecek: '+f.name+' ('+(f.size/1024).toFixed(0)+' KB)':v;
+  if(k==='icon'||k==='img') pv.replaceChildren(h('img',{src,alt:''}));
+  else if(k==='video'&&(f||/\.(mp4|webm)(\?|$)/i.test(v))) pv.replaceChildren(h('video',{src,muted:true,preload:'metadata'}));
+  else pv.replaceChildren(document.createTextNode(k==='video'?'▶':'CC'));
+}
+function fillForm(p){
+  document.querySelector('input[name=ftype][value='+(p.type||'oyun')+']').checked=true;
+  [['title','title'],['tag','tag'],['desc','desc'],['emoji','emoji'],['version','version'],['updated','updated'],['url','url'],['demo','demo'],['repo','repo'],['download','download']].forEach(([id,k])=>$('f_'+id).value=p[k]||'');
+  pend={}; ASSETS.forEach(a=>{$('a_'+a.k).value=p[a.k]||'';$('fi_'+a.k).value='';previewAsset(a.k)});
+  $('f_touch').checked=true;
+}
+function newProject(){editing=-1;$('ftitle').textContent='➕ Yeni proje';fillForm({type:'oyun'});show('edit')}
+function edit(i){editing=i;$('ftitle').textContent='✏️ Düzenle: '+data[i].title;fillForm(data[i]);show('edit')}
 
 async function save(){
-  const p={title:$('f_title').value.trim(),desc:$('f_desc').value.trim(),url:$('f_url').value.trim(),tag:$('f_tag').value.trim(),emoji:$('f_emoji').value.trim(),img:$('f_img').value.trim(),video:$('f_video').value.trim(),demo:$('f_demo').value.trim()};
-  if(!p.title||!p.url) return msg('Başlık ve adres zorunlu.',false);
-  if(!okUrl(p.url)) return msg('Adres http(s):// veya / ile başlamalı.',false);
-  if(p.demo&&!/^https?:\/\//i.test(p.demo)) return msg('Deneme adresi https:// ile başlamalı.',false);
-  if(p.video&&!/^(https?:\/\/|\/|\.\/|[\w-]+\/)/i.test(p.video)) return msg('Video adresi geçersiz.',false);
-  const vf=$('f_vfile').files[0];
-  if(vf&&vf.size>25*1024*1024) return msg('Video 25 MB üstü. YouTube linki kullan.',false);
+  const g=id=>$('f_'+id).value.trim();
+  const p={title:g('title'),type:document.querySelector('input[name=ftype]:checked').value,tag:g('tag'),desc:g('desc'),emoji:g('emoji'),version:g('version'),url:g('url'),demo:g('demo'),repo:g('repo'),download:g('download')};
+  if(!p.title||!p.url) return msg('Görünen ad ve proje adresi zorunlu.',false);
+  for(const [k,v] of [['Proje adresi',p.url],['GitHub adresi',p.repo],['İndirme adresi',p.download]]) if(v&&!okUrl(v)) return msg(k+' http(s):// ya da / ile başlamalı.',false);
+  if(p.demo&&!/^https?:\/\//i.test(p.demo)) return msg('Canlı deneme adresi https:// ile başlamalı.',false);
   $('save').disabled=true;
   try{
-    if(vf){
-      const vname='videos/'+Date.now()+'-'+vf.name.replace(/[^\w.-]/g,'_');
-      const vr=await api(`/repos/${cfg.owner}/${cfg.repo}/contents/public/${vname}`,{method:'PUT',body:JSON.stringify({message:'Video eklendi',content:await fileB64(vf),branch:cfg.branch})});
-      if(!vr.ok) return msg('Video yüklenemedi: '+vr.status,false);
-      p.video='/'+vname;
+    for(const a of ASSETS){
+      const f=pend[a.k]; let v=$('a_'+a.k).value.trim();
+      if(f){
+        let blob=f,name=f.name;
+        if(a.k==='icon') blob=await shrink(f,256,.9);
+        else if(a.k==='img') blob=await shrink(f,1280,.85);
+        else if(a.k==='subtitle'){blob=new Blob([srt2vtt(await f.text())],{type:'text/vtt'});name=name.replace(/\.srt$/i,'.vtt')}
+        if(blob!==f&&/^image\//.test(blob.type)) name=name.replace(/\.\w+$/,'')+'.webp';
+        v=await upload(a.folder,blob,name);
+      }
+      if(v&&!okUrl(v)) throw new Error(a.label+' adresi geçersiz');
+      p[a.k]=v;
     }
-    const f=$('f_file').files[0];
-    if(f){
-      const name='img/'+Date.now()+'-'+f.name.replace(/[^\w.-]/g,'_');
-      const r=await api(`/repos/${cfg.owner}/${cfg.repo}/contents/${name}`,{method:'PUT',body:JSON.stringify({message:'Görsel eklendi',content:await fileB64(f),branch:cfg.branch})});
-      if(!r.ok) return msg('Görsel yüklenemedi: '+r.status,false);
-      p.img=`https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${name}`;
-    }
+    p.updated=$('f_touch').checked?today():(g('updated')||(editing>=0&&data[editing].updated)||today());
     const old=[...data];
     if(editing>=0) data[editing]=p; else data.push(p);
-    if(await commit((editing>=0?'Proje güncellendi: ':'Proje eklendi: ')+p.title)){ msg('Kaydedildi ✔'); reset(); render() } else { data=old }
-  } finally { $('save').disabled=false }
+    if(await commit((editing>=0?'Proje güncellendi: ':'Proje eklendi: ')+p.title)){msg('Kaydedildi ✔');render();show('list')} else data=old;
+  }catch(e){msg(e.message||'Hata',false)}
+  finally{$('save').disabled=false}
 }
 
+/* ---------- GitHub'dan içe aktar ---------- */
 async function pickRepos(){
-  const box=$('repos'); box.textContent='Yükleniyor…';
+  const box=$('repos');box.textContent='Yükleniyor…';
   const r=await api('/user/repos?per_page=100&sort=pushed&affiliation=owner');
-  if(!r.ok){box.textContent='Repolar alınamadı.';return msg('Repolar alınamadı. Vercel GITHUB_TOKEN için Metadata: Read izni gerekir.',false)}
+  if(!r.ok){box.textContent='Repolar alınamadı.';return msg('Repolar alınamadı. Vercel GITHUB_LIST_TOKEN için Metadata: Read izni gerekir.',false)}
   repoList=(await r.json()).filter(x=>!x.fork&&x.name!==cfg.repo);
-  box.innerHTML='';
-  if(!repoList.length) box.textContent='Eklenebilir repo yok.';
-  repoList.forEach((x,i)=>{
+  box.replaceChildren(...(repoList.length?repoList.map((x,i)=>{
     const url=x.homepage&&okUrl(x.homepage)?x.homepage:x.html_url;
-    const added=data.some(p=>p.url===url||p.url===x.html_url);
-    const l=document.createElement('label'); l.className='repo'; l.style.cssText='display:flex;gap:10px;align-items:center;margin:0;font-size:.95rem;color:var(--txt)';
-    const c=document.createElement('input'); c.type='checkbox'; c.style.width='auto'; c.dataset.i=i; c.disabled=added;
-    const t=document.createElement('span');
-    t.textContent=`${x.private?'🔒 ':''}${x.name}${x.description?' — '+x.description:''}${added?'  (eklendi)':''}`;
-    if(added) t.style.opacity=.5;
-    l.append(c,t); box.appendChild(l);
-  });
+    const added=data.some(p=>(p.repo&&p.repo===x.html_url)||p.url===url||p.url===x.html_url);
+    return h('div',{class:'repo'},
+      h('input',{type:'checkbox','data-i':i,disabled:added}),
+      h('div',null,h('b',{text:(x.private?'🔒 ':'')+x.name}),added?h('span',{class:'badge',text:'eklendi',style:'margin-left:8px'}):null,
+        h('div',{class:'mut sm',text:x.description||''})),
+      h('input',{type:'text',id:'rn_'+i,value:x.name,placeholder:'Görünen ad',disabled:added}));
+  }):[document.createTextNode('Eklenebilir repo yok.')]));
 }
 async function addSelected(){
-  const picks=[...document.querySelectorAll('#repos input:checked')].map(c=>repoList[+c.dataset.i]);
+  const picks=[...document.querySelectorAll('#repos input[type=checkbox]:checked')].map(c=>+c.dataset.i);
   if(!picks.length) return msg('Önce en az bir repo seç.',false);
-  const priv=picks.filter(x=>x.private);
-  if(priv.length&&!confirm('Özel (🔒) repolar herkese açık galeride görünür: '+priv.map(x=>x.name).join(', ')+'. Yine de eklensin mi?')) return;
-  const old=[...data];
-  picks.forEach(x=>data.push({title:x.name,desc:x.description||'',url:x.homepage&&okUrl(x.homepage)?x.homepage:x.html_url,tag:x.language||'',emoji:'📁',img:'',video:'',demo:''}));
+  const priv=picks.filter(i=>repoList[i].private);
+  if(priv.length&&!confirm('Özel (🔒) repolar herkese açık galeride görünür: '+priv.map(i=>repoList[i].name).join(', ')+'. Yine de eklensin mi?')) return;
+  const type=$('imp_type').value,old=[...data];
+  picks.forEach(i=>{const x=repoList[i];
+    data.push({title:$('rn_'+i).value.trim()||x.name,type,tag:x.language||'',desc:x.description||'',emoji:EMO[type],
+      url:x.homepage&&okUrl(x.homepage)?x.homepage:x.html_url,repo:x.html_url,updated:(x.pushed_at||'').slice(0,10)||today(),
+      icon:'',img:'',video:'',subtitle:'',demo:'',download:'',version:''})});
   $('addSel').disabled=true;
-  try{
-    if(await commit('GitHub ile eklendi: '+picks.map(x=>x.name).join(', '))){msg(picks.length+' proje eklendi ✔');render();pickRepos()} else {data=old}
-  } finally {$('addSel').disabled=false}
+  try{ if(await commit('GitHub ile eklendi: '+picks.map(i=>repoList[i].name).join(', '))){msg(picks.length+' proje eklendi ✔');render();pickRepos();show('list')} else data=old }
+  finally{$('addSel').disabled=false}
 }
 
-$('save').onclick=save; $('cancel').onclick=reset; $('addSel').onclick=addSelected; $('reload').onclick=pickRepos;
-
-connect();
+/* ---------- başlat ---------- */
+$('tabs').onclick=e=>{const t=e.target.dataset&&e.target.dataset.t;if(t){if(t==='edit'&&editing<0&&!$('f_title').value)newProject();else show(t)}};
+$('q').oninput=e=>{filt.q=e.target.value;render()};
+$('new').onclick=newProject; $('save').onclick=save; $('cancel').onclick=()=>show('list');
+$('addSel').onclick=addSelected; $('reload').onclick=pickRepos;
+buildAssets(); connect();
 </script>
 </body>
 </html>
