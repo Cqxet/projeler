@@ -74,6 +74,10 @@
       <label>Açıklama</label><textarea id="f_desc" rows="2"></textarea>
       <label>Görsel adresi (isteğe bağlı) veya dosya yükle</label>
       <div class="row"><input id="f_img" placeholder="img/ornek.png"><input type="file" id="f_file" accept="image/*"></div>
+      <label>Video: YouTube/Vimeo linki, .mp4 adresi veya dosya yükle (en fazla ~25 MB; büyükse YouTube kullan)</label>
+      <div class="row"><input id="f_video" placeholder="https://youtu.be/… veya videos/demo.mp4"><input type="file" id="f_vfile" accept="video/mp4,video/webm"></div>
+      <label>Canlı deneme / arayüz adresi (iframe ile gösterilir, isteğe bağlı)</label>
+      <input id="f_demo" placeholder="https://proje.vercel.app">
       <div class="bar"><button class="p" id="save">Kaydet</button><button id="cancel" class="hide">Vazgeç</button></div>
     </div>
   </div>
@@ -148,17 +152,27 @@ async function del(i){
 function edit(i){
   editing=i; const p=data[i];
   $('ftitle').textContent='✏️ Düzenle';
-  ['title','tag','url','emoji','desc','img'].forEach(k=>$('f_'+k).value=p[k]||'');
+  ['title','tag','url','emoji','desc','img','video','demo'].forEach(k=>$('f_'+k).value=p[k]||'');
   $('cancel').classList.remove('hide'); $('f_title').scrollIntoView({behavior:'smooth'});
 }
-function reset(){editing=-1;$('ftitle').textContent='➕ Yeni proje';['title','tag','url','emoji','desc','img'].forEach(k=>$('f_'+k).value='');$('f_file').value='';$('cancel').classList.add('hide')}
+function reset(){editing=-1;$('ftitle').textContent='➕ Yeni proje';['title','tag','url','emoji','desc','img','video','demo'].forEach(k=>$('f_'+k).value='');$('f_file').value='';$('f_vfile').value='';$('cancel').classList.add('hide')}
 
 async function save(){
-  const p={title:$('f_title').value.trim(),desc:$('f_desc').value.trim(),url:$('f_url').value.trim(),tag:$('f_tag').value.trim(),emoji:$('f_emoji').value.trim(),img:$('f_img').value.trim()};
+  const p={title:$('f_title').value.trim(),desc:$('f_desc').value.trim(),url:$('f_url').value.trim(),tag:$('f_tag').value.trim(),emoji:$('f_emoji').value.trim(),img:$('f_img').value.trim(),video:$('f_video').value.trim(),demo:$('f_demo').value.trim()};
   if(!p.title||!p.url) return msg('Başlık ve adres zorunlu.',false);
   if(!okUrl(p.url)) return msg('Adres http(s):// veya / ile başlamalı.',false);
+  if(p.demo&&!/^https?:\/\//i.test(p.demo)) return msg('Deneme adresi https:// ile başlamalı.',false);
+  if(p.video&&!/^(https?:\/\/|\/|\.\/|[\w-]+\/)/i.test(p.video)) return msg('Video adresi geçersiz.',false);
+  const vf=$('f_vfile').files[0];
+  if(vf&&vf.size>25*1024*1024) return msg('Video 25 MB üstü. YouTube linki kullan.',false);
   $('save').disabled=true;
   try{
+    if(vf){
+      const vname='videos/'+Date.now()+'-'+vf.name.replace(/[^\w.-]/g,'_');
+      const vr=await api(`/repos/${cfg.owner}/${cfg.repo}/contents/public/${vname}`,{method:'PUT',body:JSON.stringify({message:'Video eklendi',content:await fileB64(vf),branch:cfg.branch})});
+      if(!vr.ok) return msg('Video yüklenemedi: '+vr.status,false);
+      p.video='/'+vname;
+    }
     const f=$('f_file').files[0];
     if(f){
       const name='img/'+Date.now()+'-'+f.name.replace(/[^\w.-]/g,'_');
@@ -196,7 +210,7 @@ async function addSelected(){
   const priv=picks.filter(x=>x.private);
   if(priv.length&&!confirm('Özel (🔒) repolar herkese açık galeride görünür: '+priv.map(x=>x.name).join(', ')+'. Yine de eklensin mi?')) return;
   const old=[...data];
-  picks.forEach(x=>data.push({title:x.name,desc:x.description||'',url:x.homepage&&okUrl(x.homepage)?x.homepage:x.html_url,tag:x.language||'',emoji:'📁',img:''}));
+  picks.forEach(x=>data.push({title:x.name,desc:x.description||'',url:x.homepage&&okUrl(x.homepage)?x.homepage:x.html_url,tag:x.language||'',emoji:'📁',img:'',video:'',demo:''}));
   $('addSel').disabled=true;
   try{
     if(await commit('GitHub ile eklendi: '+picks.map(x=>x.name).join(', '))){msg(picks.length+' proje eklendi ✔');render();pickRepos()} else {data=old}

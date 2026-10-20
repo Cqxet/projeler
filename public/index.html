@@ -27,6 +27,17 @@
   .chip{font-size:.75rem;color:var(--acc)}
   .empty{grid-column:1/-1;color:var(--mut);text-align:center;padding:40px}
   footer{text-align:center;color:var(--mut);padding:0 16px 32px;font-size:.85rem}
+
+  #modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+  #modal.on{display:flex}
+  .mbox{background:var(--card);border:1px solid var(--line);border-radius:16px;width:min(900px,100%);max-height:92vh;overflow:auto}
+  .mmedia{aspect-ratio:16/9;background:#000;border-radius:16px 16px 0 0;overflow:hidden}
+  .mmedia iframe,.mmedia video{width:100%;height:100%;border:0;display:block}
+  .mtext{padding:16px 20px 20px}
+  .mtext h2{margin:0 0 6px} .mtext p{margin:0 0 14px;color:var(--mut)}
+  .mbtn{display:inline-block;padding:9px 16px;border-radius:9px;background:var(--acc);color:#fff;text-decoration:none;margin-right:8px;border:0;font:inherit;cursor:pointer}
+  .mbtn.g{background:transparent;border:1px solid var(--line);color:var(--txt)}
+  .tabs{display:flex;gap:8px;padding:12px 20px 0}
 </style>
 </head>
 <body>
@@ -41,6 +52,17 @@
 <main id="grid"></main>
 <footer>© cqxet.site</footer>
 
+<div id="modal" role="dialog" aria-modal="true">
+  <div class="mbox">
+    <div class="tabs" id="mtabs"></div>
+    <div class="mmedia" id="mmedia"></div>
+    <div class="mtext">
+      <h2 id="mtitle"></h2><p id="mdesc"></p>
+      <a class="mbtn" id="mopen" target="_blank" rel="noopener">Projeyi aç</a>
+      <button class="mbtn g" id="mclose">Kapat</button>
+    </div>
+  </div>
+</div>
 <script src="config.js"></script>
 <script>
 let projects=[];
@@ -55,6 +77,43 @@ async function load(){
   }catch(e){}
   return await (await fetch('projects.json',{cache:'no-store'})).json();
 }
+
+function embedUrl(u){
+  u=(u||'').trim(); let m;
+  if((m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/))) return {t:'iframe',src:'https://www.youtube-nocookie.com/embed/'+m[1]};
+  if((m=u.match(/vimeo\.com\/(\d+)/))) return {t:'iframe',src:'https://player.vimeo.com/video/'+m[1]};
+  if(/\.(mp4|webm|ogg)(\?.*)?$/i.test(u)) return {t:'video',src:safeUrl(u)};
+  if(/^https?:\/\//i.test(u)) return {t:'iframe',src:u};
+  return null;
+}
+const modal=document.getElementById('modal'), mmedia=document.getElementById('mmedia'), mtabs=document.getElementById('mtabs');
+function showMedia(kind,p){
+  mmedia.innerHTML='';
+  const e=embedUrl(kind==='demo'?p.demo:p.video); if(!e){mmedia.textContent='';return}
+  let el;
+  if(e.t==='video'){el=document.createElement('video');el.controls=true;el.preload='metadata';el.src=e.src;if(p.img)el.poster=p.img}
+  else{el=document.createElement('iframe');el.src=e.src;el.allowFullscreen=true;el.loading='lazy';
+       el.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
+       if(kind==='demo'){el.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-popups')}
+       el.referrerPolicy='no-referrer'}
+  mmedia.appendChild(el);
+  [...mtabs.children].forEach(b=>b.classList.toggle('on',b.dataset.k===kind));
+}
+function openModal(p){
+  document.getElementById('mtitle').textContent=p.title;
+  document.getElementById('mdesc').textContent=p.desc||'';
+  const o=document.getElementById('mopen'); o.href=safeUrl(p.url); o.style.display=p.url?'':'none';
+  mtabs.innerHTML='';
+  const kinds=[p.video&&['video','▶ Video'],p.demo&&['demo','🖥 Canlı deneme']].filter(Boolean);
+  kinds.forEach(([k,label])=>{const b=document.createElement('button');b.className='tag';b.textContent=label;b.dataset.k=k;b.onclick=()=>showMedia(k,p);mtabs.appendChild(b)});
+  mtabs.style.display=kinds.length>1?'flex':'none';
+  showMedia(kinds[0][0],p); modal.classList.add('on'); document.body.style.overflow='hidden';
+}
+function closeModal(){modal.classList.remove('on');mmedia.innerHTML='';document.body.style.overflow=''}
+document.getElementById('mclose').onclick=closeModal;
+modal.onclick=e=>{if(e.target===modal)closeModal()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
 const grid=document.getElementById('grid'), q=document.getElementById('q'), tagsEl=document.getElementById('tags');
 let active='';
 let tags=[];
@@ -74,6 +133,7 @@ function render(){
   grid.innerHTML=list.length?'':'<div class="empty">Sonuç yok.</div>';
   list.forEach(p=>{
     const a=document.createElement('a');a.className='card';a.href=safeUrl(p.url);
+    if(p.video||p.demo) a.onclick=e=>{e.preventDefault();openModal(p)};
     const th=document.createElement('div');th.className='thumb';
     if(p.img){const i=document.createElement('img');i.src=p.img;i.alt=p.title;th.appendChild(i)}else th.textContent=p.emoji||'📁';
     const b=document.createElement('div');b.className='body';
