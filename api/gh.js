@@ -4,11 +4,15 @@ const auth = require('./_auth');
 // Sadece izin verilen yollar: bu reponun contents'i ve kullanicinin repo listesi.
 module.exports = async (req, res) => {
   if (!auth(req, res)) return;
-  const token = process.env.GITHUB_TOKEN, owner = process.env.GH_OWNER, repo = process.env.GH_REPO;
+  const clean = v => String(v || '').trim().replace(/^\/+|\/+$/g, '');
+  const token = String(process.env.GITHUB_TOKEN || '').trim(), owner = clean(process.env.GH_OWNER), repo = clean(process.env.GH_REPO);
   if (!token || !owner || !repo) { res.statusCode = 503; return res.end('GITHUB_TOKEN / GH_OWNER / GH_REPO tanimli degil.'); }
 
   let p = String(req.query && req.query.path || '');
-  const okContents = p.toLowerCase().startsWith(`/repos/${owner}/${repo}/contents/`.toLowerCase());
+  // Repo adı/sahibi istemciden alınmaz; sadece Vercel ayarındaki repo kullanılır.
+  const m = p.match(/^\/repos\/[^/]+\/[^/]+\/contents\/(.*)$/);
+  const okContents = !!m;
+  if (m) p = `/repos/${owner}/${repo}/contents/${m[1]}`;
   const okList = p.startsWith('/user/repos?');
   if (p.includes('..') || p.includes('//') || !(okContents || okList)) { res.statusCode = 403; return res.end('Yasak yol.'); }
   if (!['GET', 'PUT'].includes(req.method) || (okList && req.method !== 'GET')) { res.statusCode = 405; return res.end('Yasak metod.'); }
