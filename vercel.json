@@ -8,13 +8,23 @@
   "rewrites": [
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "hollowsignal.cqxet.site" }],
-      "destination": "/hollowsignal/index.html"
+      "has": [
+        {
+          "type": "host",
+          "value": "thelongstatic.cqxet.site"
+        }
+      ],
+      "destination": "/the-long-static/index.html"
     },
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "hollowsignal.vercel.app" }],
-      "destination": "/hollowsignal/index.html"
+      "has": [
+        {
+          "type": "host",
+          "value": "thelongstatic.vercel.app"
+        }
+      ],
+      "destination": "/the-long-static/index.html"
     },
     {
       "source": "/admin",
@@ -81,6 +91,18 @@
           "value": "no-store"
         }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/hollowsignal",
+      "destination": "/the-long-static/",
+      "permanent": false
+    },
+    {
+      "source": "/hollowsignal/",
+      "destination": "/the-long-static/",
+      "permanent": false
     }
   ]
 }
