@@ -32,5 +32,22 @@
     "demo": "",
     "download": "",
     "version": ""
+  },
+  {
+    "title": "LexiCut",
+    "type": "uygulama",
+    "tag": "Python",
+    "desc": "Windows video editor with automatic Turkish subtitles (Premiere-like UI, keyframes, Shorts export)",
+    "emoji": "📱",
+    "url": "https://github.com/Cqxet/altyazi-studyo",
+    "repo": "https://github.com/Cqxet/altyazi-studyo",
+    "updated": "2026-10-12",
+    "icon": "",
+    "img": "",
+    "video": "",
+    "subtitle": "",
+    "demo": "",
+    "download": "",
+    "version": ""
   }
 ]
