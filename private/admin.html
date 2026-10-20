@@ -58,9 +58,13 @@
     </div>
 
     <div class="box">
+      <h2>🐙 GitHub'dan hangi projeyi eklemek istersin?</h2>
+      <div id="repos" class="mut">Yükleniyor…</div>
+      <div class="bar"><button class="p" id="addSel">Seçilenleri ekle</button><button id="reload">Listeyi yenile</button></div>
+    </div>
+
+    <div class="box">
       <h2 id="ftitle">➕ Yeni proje</h2>
-      <div class="bar" style="margin:0 0 6px"><button id="pick">GitHub repolarımdan seç</button></div>
-      <div id="repos" class="hide"></div>
       <div class="row">
         <div><label>Başlık *</label><input id="f_title"></div>
         <div><label>Kategori</label><input id="f_tag" list="tags" placeholder="Oyun, Uygulama…"><datalist id="tags"></datalist></div>
@@ -78,7 +82,7 @@
 <script>
 const $=id=>document.getElementById(id);
 const LS='projadmin';
-let cfg={}, data=[], sha=null, editing=-1;
+let cfg={}, data=[], sha=null, editing=-1, repoList=[];
 
 try{cfg=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
 const def=window.SITE||{};
@@ -101,7 +105,7 @@ async function connect(){
   else if(!r.ok) return msg('Bağlanılamadı: '+r.status,false);
   else { const j=await r.json(); sha=j.sha; try{data=JSON.parse(unb64(j.content))}catch(e){return msg('projects.json bozuk.',false)} }
   localStorage.setItem(LS,JSON.stringify(cfg));
-  $('app').classList.remove('hide'); render(); msg('Bağlandı ✔');
+  $('app').classList.remove('hide'); render(); msg('Bağlandı ✔'); pickRepos();
 }
 
 async function commit(message){
@@ -169,24 +173,37 @@ async function save(){
 }
 
 async function pickRepos(){
-  const box=$('repos'); box.classList.toggle('hide'); if(box.classList.contains('hide')) return;
-  box.textContent='Yükleniyor…';
+  const box=$('repos'); box.textContent='Yükleniyor…';
   const r=await api('/user/repos?per_page=100&sort=pushed&affiliation=owner');
-  if(!r.ok){box.textContent='';return msg('Repolar alınamadı (token yetkisi gerekebilir: Metadata Read).',false)}
-  const repos=await r.json(); box.innerHTML='';
-  repos.filter(x=>!x.fork).forEach(x=>{
-    const d=document.createElement('div'); d.className='repo';
-    d.textContent=`${x.private?'🔒 ':''}${x.name}${x.description?' — '+x.description:''}`;
-    d.onclick=()=>{
-      $('f_title').value=x.name; $('f_desc').value=x.description||'';
-      $('f_url').value=x.homepage&&okUrl(x.homepage)?x.homepage:x.html_url;
-      $('f_tag').value=x.language||''; box.classList.add('hide'); $('f_title').scrollIntoView({behavior:'smooth'});
-    };
-    box.appendChild(d);
+  if(!r.ok){box.textContent='Repolar alınamadı.';return msg('Repolar alınamadı (token'+"'"+'a Metadata: Read izni gerekir).',false)}
+  repoList=(await r.json()).filter(x=>!x.fork&&x.name!==cfg.repo);
+  box.innerHTML='';
+  if(!repoList.length) box.textContent='Eklenebilir repo yok.';
+  repoList.forEach((x,i)=>{
+    const url=x.homepage&&okUrl(x.homepage)?x.homepage:x.html_url;
+    const added=data.some(p=>p.url===url||p.url===x.html_url);
+    const l=document.createElement('label'); l.className='repo'; l.style.cssText='display:flex;gap:10px;align-items:center;margin:0;font-size:.95rem;color:var(--txt)';
+    const c=document.createElement('input'); c.type='checkbox'; c.style.width='auto'; c.dataset.i=i; c.disabled=added;
+    const t=document.createElement('span');
+    t.textContent=`${x.private?'🔒 ':''}${x.name}${x.description?' — '+x.description:''}${added?'  (eklendi)':''}`;
+    if(added) t.style.opacity=.5;
+    l.append(c,t); box.appendChild(l);
   });
 }
+async function addSelected(){
+  const picks=[...document.querySelectorAll('#repos input:checked')].map(c=>repoList[+c.dataset.i]);
+  if(!picks.length) return msg('Önce en az bir repo seç.',false);
+  const priv=picks.filter(x=>x.private);
+  if(priv.length&&!confirm('Özel (🔒) repolar herkese açık galeride görünür: '+priv.map(x=>x.name).join(', ')+'. Yine de eklensin mi?')) return;
+  const old=[...data];
+  picks.forEach(x=>data.push({title:x.name,desc:x.description||'',url:x.homepage&&okUrl(x.homepage)?x.homepage:x.html_url,tag:x.language||'',emoji:'📁',img:''}));
+  $('addSel').disabled=true;
+  try{
+    if(await commit('GitHub ile eklendi: '+picks.map(x=>x.name).join(', '))){msg(picks.length+' proje eklendi ✔');render();pickRepos()} else {data=old}
+  } finally {$('addSel').disabled=false}
+}
 
-$('connect').onclick=connect; $('save').onclick=save; $('cancel').onclick=reset; $('pick').onclick=pickRepos;
+$('connect').onclick=connect; $('save').onclick=save; $('cancel').onclick=reset; $('addSel').onclick=addSelected; $('reload').onclick=pickRepos;
 $('forget').onclick=()=>{localStorage.removeItem(LS);$('token').value='';$('app').classList.add('hide');msg('Bilgiler silindi')};
 if(cfg.token&&cfg.owner&&cfg.repo) connect();
 </script>
