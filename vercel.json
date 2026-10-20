@@ -7,6 +7,16 @@
   },
   "rewrites": [
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "hollowsignal.cqxet.site" }],
+      "destination": "/hollowsignal/index.html"
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "hollowsignal.vercel.app" }],
+      "destination": "/hollowsignal/index.html"
+    },
+    {
       "source": "/admin",
       "destination": "/api/admin"
     },
