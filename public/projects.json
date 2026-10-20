@@ -15,5 +15,22 @@
     "demo": "",
     "download": "",
     "version": ""
+  },
+  {
+    "title": "A-CAD",
+    "type": "uygulama",
+    "tag": "TypeScript",
+    "desc": "A - kisisel parametrik CAD",
+    "emoji": "📱",
+    "url": "https://a-cad.vercel.app",
+    "repo": "https://github.com/Cqxet/a-cad",
+    "updated": "2026-10-20",
+    "icon": "",
+    "img": "",
+    "video": "",
+    "subtitle": "",
+    "demo": "",
+    "download": "",
+    "version": ""
   }
 ]
