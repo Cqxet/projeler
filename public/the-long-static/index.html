@@ -1,4 +1,25 @@
 <!doctype html>
+<!--
+  FRAGMAN NASIL EKLENİR
+  1) Dosyadaki <script> bölümünün en üstündeki TRAILER nesnesini doldur:
+       youtube : YouTube video kimliği (örn. 'dQw4w9WgXcQ'; tam bağlantı da olur). Boş bırakılırsa mp4 denenir.
+       mp4     : (YouTube yoksa) aynı klasöre koyduğun dosyanın yolu, örn. 'fragman.mp4'
+       poster  : kapak görseli (varsayılan 'cover.webp')
+       title / duration ('1:32') / date ('2026-12-01') : isteğe bağlı, doluysa bölüm altında görünür.
+  2) Başka hiçbir yeri değiştirmene gerek yok: sayfa "Fragman yakında" durumundan "yayında" durumuna kendiliğinden geçer.
+  3) Sosyal paylaşım için (botlar JS çalıştırmaz) <head> içindeki yorum satırı halindeki og:video / twitter:player /
+     JSON-LD kopyasını elle aç ve VIDEO_ID değerlerini doldur. Sayfa bunları JS ile de ekler.
+
+  Fragman sayfada şu yerlerde görünür (hepsi TRAILER'dan beslenir):
+   a. Hero: "Fragmanı izle" düğmesi (boşken pasif, "Fragman yakında").
+   b. #fragman bölümü: 16:9 çerçeve, tıklayınca yerinde yüklenen hafif gömme; altında başlık, süre, tarih.
+   c. Modal (lightbox): hero düğmesi, üst bar, alt bilgi bağlantıları açar; Esc ve dışarı tıklama kapatır, kapanınca video sökülür.
+   d. Üst bar: "Fragman" bağlantısı (boşken soluk, "yakında" etiketli).
+   e. Paylaşım/SEO: og:video, twitter:player ve VideoObject JSON-LD.
+   f. Alt bilgi: "Fragman" bağlantısı.
+   g. Kısayollar: #fragman (bölüme git) ve ?fragman=1 (sayfa açılınca modalı açar, fragman varsa).
+  Gizlilik: YouTube yalnızca kullanıcı tıklayınca ve youtube-nocookie.com üzerinden yüklenir.
+-->
 <html lang="tr">
 <head>
 <meta charset="utf-8">
@@ -7,50 +28,96 @@
 <title>The Long Static: Varn Ridge – Psikolojik korku oyunu</title>
 <meta name="description" content="1987, dağ tepesinde terk edilmiş bir röle istasyonu. Radyoya giren sesler geleceği anlatıyor. Hangisine inanacaksın?">
 <meta name="theme-color" content="#07080a">
+<meta property="og:type" content="website">
 <meta property="og:title" content="The Long Static: Varn Ridge">
 <meta property="og:description" content="1987, terk edilmiş bir röle istasyonu. Radyodaki sesler geleceği anlatıyor.">
 <meta property="og:image" content="https://thelongstatic.vercel.app/cover.webp">
+<!--
+  FRAGMAN EKLENİNCE ELLE AÇ (sosyal botlar JS çalıştırmaz; sayfa bunları JS ile de ekler).
+  YouTube için:
+  <meta property="og:video" content="https://www.youtube-nocookie.com/embed/VIDEO_ID">
+  <meta property="og:video:secure_url" content="https://www.youtube-nocookie.com/embed/VIDEO_ID">
+  <meta property="og:video:type" content="text/html">
+  <meta property="og:video:width" content="1280">
+  <meta property="og:video:height" content="720">
+  <meta name="twitter:card" content="player">
+  <meta name="twitter:player" content="https://www.youtube-nocookie.com/embed/VIDEO_ID">
+  <meta name="twitter:player:width" content="1280">
+  <meta name="twitter:player:height" content="720">
+  mp4 için og:video içeriği tam adres olmalı (https://thelongstatic.vercel.app/fragman.mp4) ve og:video:type "video/mp4" olmalı.
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"VideoObject","name":"The Long Static: Varn Ridge – Fragman",
+   "description":"1987, terk edilmiş bir röle istasyonu. Radyodaki sesler geleceği anlatıyor.",
+   "thumbnailUrl":"https://thelongstatic.vercel.app/cover.webp","uploadDate":"YYYY-AA-GG","duration":"PT1M32S",
+   "embedUrl":"https://www.youtube-nocookie.com/embed/VIDEO_ID"}
+  </script>
+-->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307080a'/%3E%3Cpath d='M12 40q20-26 40 0M20 40q12-14 24 0' fill='none' stroke='%23ffb454' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='46' r='4' fill='%23ffb454'/%3E%3C/svg%3E">
 <style>
   :root{color-scheme:dark;--bg:#07080a;--ink:#e8e1d0;--mut:#8f8a7c;--amb:#ffb454;--amb2:#ff7a45;--line:rgba(255,180,84,.18);--mono:ui-monospace,"Cascadia Mono",Consolas,"Courier New",monospace}
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;scroll-padding-top:56px}
+  html.lock{overflow:hidden}
   body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.7 Georgia,"Times New Roman",serif;overflow-x:hidden}
   a{color:var(--amb)}
-  /* tarama çizgileri + vinyet */
+  :focus-visible{outline:2px solid var(--amb);outline-offset:3px;border-radius:2px}
   body::before{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);mix-blend-mode:multiply}
   body::after{content:"";position:fixed;inset:0;z-index:59;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.65))}
   .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
   .mono{font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;font-size:.78rem;color:var(--amb)}
+  .skip{position:fixed;left:12px;top:-60px;z-index:100;padding:10px 16px;background:var(--amb);color:#111;font:700 .85rem var(--mono);text-decoration:none;border-radius:2px}
+  .skip:focus{top:12px}
+  /* trailer durum anahtarı */
+  html:not([data-trailer=live]) .if-live,html[data-trailer=live] .if-soon{display:none!important}
+
+  /* sinyal şeridi */
+  .strip{position:fixed;top:0;left:0;right:0;height:7px;z-index:90;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(255,180,84,.22) 0 1px,transparent 1px 12px),linear-gradient(rgba(7,8,10,.85),rgba(7,8,10,.85))}
+  .strip i{position:absolute;left:0;top:0;bottom:0;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,rgba(255,122,69,.35),var(--amb));box-shadow:0 0 10px rgba(255,180,84,.6)}
+  .strip b{position:absolute;top:-2px;bottom:-2px;width:2px;left:0;background:#fff3d6;box-shadow:0 0 8px var(--amb)}
 
   /* üst bar */
-  .nav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:linear-gradient(#07080acc,transparent)}
+  .nav{position:fixed;top:7px;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 22px;background:linear-gradient(#07080add,transparent)}
+  .nav nav{display:flex;gap:18px;align-items:center}
   .nav a{font:600 .8rem var(--mono);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--ink);opacity:.8}
   .nav a:hover{opacity:1;color:var(--amb)}
+  html:not([data-trailer=live]) .nav a.tr{opacity:.45}
+  .soon-tag{font-size:.62rem;margin-left:5px;padding:1px 5px;border:1px solid var(--line);border-radius:999px;color:var(--mut);vertical-align:1px}
 
   /* hero */
-  .hero{position:relative;min-height:100svh;display:grid;align-items:end;padding:120px 0 70px;isolation:isolate}
+  .hero{position:relative;min-height:100svh;display:grid;align-items:end;padding:120px 0 96px;isolation:isolate}
   .hero .bg{position:absolute;inset:0;z-index:-2;background:#000 url("cover.webp") center 100%/cover no-repeat;filter:saturate(.85) contrast(1.05);animation:flick 7s infinite}
   .hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,var(--bg) 4%,rgba(7,8,10,.55) 45%,rgba(7,8,10,.25))}
   .hero::before{content:"";position:absolute;left:0;right:0;top:0;height:42%;z-index:-1;background:linear-gradient(#07080a 30%,rgba(7,8,10,.9) 62%,transparent)}
+  .hero.idle *{animation-play-state:paused!important}
   @keyframes flick{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.82}94%{opacity:1}96%{opacity:.9}97%{opacity:1}}
+  @keyframes glitch{0%,90%,100%{text-shadow:0 0 30px rgba(255,160,60,.25);transform:none}91%{text-shadow:-3px 0 rgba(255,60,60,.65),3px 0 rgba(60,200,255,.5);transform:translateX(2px)}93%{text-shadow:3px 0 rgba(255,60,60,.5),-2px 0 rgba(60,200,255,.45);transform:translateX(-2px) skewX(-1deg)}95%{text-shadow:0 0 30px rgba(255,160,60,.25);transform:none}}
   .badge{display:inline-flex;align-items:center;gap:9px;padding:6px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(7,8,10,.6);backdrop-filter:blur(6px)}
   .badge i{width:8px;height:8px;border-radius:50%;background:var(--amb2);box-shadow:0 0 10px var(--amb2);animation:blink 1.6s infinite}
   @keyframes blink{50%{opacity:.25}}
-  h1{margin:18px 0 10px;font:800 clamp(2.8rem,10vw,7.4rem)/.95 var(--mono);letter-spacing:.04em;text-transform:uppercase;text-shadow:0 0 30px rgba(255,160,60,.25)}
+  h1{margin:18px 0 10px;font:800 clamp(2.8rem,10vw,7.4rem)/.95 var(--mono);letter-spacing:.04em;text-transform:uppercase;text-shadow:0 0 30px rgba(255,160,60,.25);animation:glitch 9s infinite}
   h1 em{display:block;font-style:normal;color:var(--amb);font-weight:400;letter-spacing:.3em;font-size:.32em;margin-top:.5em}
-  .tag{max-width:620px;font-size:clamp(1.05rem,2.4vw,1.3rem);color:#d8d0bc}
-  .cta{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
+  .tag{max-width:620px;font-size:clamp(1.05rem,2.4vw,1.3rem);color:#d8d0bc;margin:0}
+  .chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0;padding:0}
+  .chips li{font:600 .72rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#cfc8b6;padding:4px 10px;border:1px solid var(--line);background:rgba(7,8,10,.55)}
+  .cta{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap}
   .btn{display:inline-block;padding:13px 24px;border-radius:2px;border:1px solid var(--amb);color:var(--amb);text-decoration:none;font:600 .85rem var(--mono);letter-spacing:.1em;text-transform:uppercase;background:rgba(7,8,10,.5);cursor:pointer;transition:.25s}
   .btn:hover{background:var(--amb);color:#111}
-  .btn.off{border-color:var(--line);color:var(--mut);cursor:default}
-  .btn.off:hover{background:rgba(7,8,10,.5);color:var(--mut)}
+  .btn.off,.btn:disabled{border-color:var(--line);color:var(--mut);cursor:default}
+  .btn.off:hover,.btn:disabled:hover{background:rgba(7,8,10,.5);color:var(--mut)}
+  .btn.sec{border-color:rgba(232,225,208,.4);color:var(--ink)}
+  .btn.sec:disabled{border-color:var(--line);color:var(--mut)}
+  .scroll{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);display:grid;justify-items:center;gap:6px;text-decoration:none;font:600 .65rem var(--mono);letter-spacing:.25em;text-transform:uppercase;color:var(--mut)}
+  .scroll span{width:1px;height:34px;background:linear-gradient(var(--amb),transparent);animation:drip 2s infinite}
+  @keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
-  section{padding:90px 0}
+  section{padding:70px 0}
   h2{font:700 clamp(1.5rem,4vw,2.3rem)/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;margin:6px 0 18px}
-  .lead{max-width:680px;color:#cfc8b6}
+  .lead{max-width:680px;color:#cfc8b6;margin:0}
+  .wave{display:block;width:100%;height:24px;opacity:.55;-webkit-mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent)}
+  .chip{display:inline-block;font:600 .64rem var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--line);border-radius:999px;color:var(--mut);white-space:nowrap}
+  .chip.live{color:var(--amb);border-color:var(--amb)}
 
-  /* radyo kadranı */
+  /* radyo */
   .radio{position:relative;border:1px solid var(--line);border-radius:8px;background:linear-gradient(#0f1012,#0a0b0d);padding:22px;box-shadow:0 30px 80px -30px #000,0 0 0 1px #000 inset}
   .screen{position:relative;height:210px;border-radius:4px;overflow:hidden;background:#050607;border:1px solid #000;box-shadow:0 0 0 2px #1b1c1f}
   .screen canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
@@ -71,44 +138,170 @@
   .rbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:16px}
   .hint{color:var(--mut);font-size:.88rem}
 
+  /* fragman */
+  .sechead{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+  .stage{position:relative;aspect-ratio:16/9;margin-top:26px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#000;box-shadow:0 30px 80px -30px #000}
+  .stage .poster{position:absolute;inset:0;background:#000 url("cover.webp") center/cover no-repeat;filter:saturate(.7) brightness(.55)}
+  html[data-trailer=live] .stage .poster{filter:saturate(.9) brightness(.8)}
+  .stage canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
+  .nosig{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:6px;padding:12px}
+  .nosig b{font:800 clamp(1.1rem,4.5vw,2.2rem) var(--mono);letter-spacing:.2em;color:var(--amb);text-transform:uppercase;padding:8px 16px;background:rgba(5,6,7,.9);animation:blink 2s infinite}
+  .nosig span{font:600 .8rem var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#d8d0bc;background:rgba(5,6,7,.7);padding:3px 10px;justify-self:center}
+  .play{position:absolute;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;border:2px solid var(--amb);background:rgba(7,8,10,.65);cursor:pointer;display:grid;place-items:center;color:var(--amb);box-shadow:0 0 30px rgba(255,180,84,.35);transition:.25s}
+  .play:hover{background:var(--amb);color:#111;transform:scale(1.07)}
+  .play svg{width:34px;height:34px;margin-left:4px}
+  .stage.playing .poster,.stage.playing canvas,.stage.playing .play{display:none}
+  .media,.media iframe,.media video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+  .media:empty{display:none}
+  .trmeta{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;margin-top:14px}
+  .trmeta h3{margin:0;font:700 1rem var(--mono);letter-spacing:.05em;text-transform:uppercase}
+  .trmeta span{font:.8rem var(--mono);color:var(--mut)}
+
+  /* modal */
+  .modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(3,4,5,.92)}
+  .modal.open{display:flex}
+  .mbox{position:relative;width:min(960px,100%)}
+  .mframe{position:relative;aspect-ratio:16/9;background:#000;border:1px solid var(--line);box-shadow:0 0 60px rgba(255,180,84,.12)}
+  .mclose{position:absolute;right:0;top:-46px;padding:8px 14px;border:1px solid var(--amb);background:rgba(7,8,10,.8);color:var(--amb);font:600 .78rem var(--mono);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+  .mclose:hover{background:var(--amb);color:#111}
+  .mtitle{margin:10px 0 0;font:.8rem var(--mono);color:var(--mut)}
+
   /* kartlar */
   .grid3{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:34px}
-  .card{padding:24px;border:1px solid var(--line);border-radius:6px;background:linear-gradient(#0e0f11,#0a0b0c)}
+  .card{padding:24px;border:1px solid var(--line);border-radius:6px;background:linear-gradient(#0e0f11,#0a0b0c);transition:transform .25s,border-color .25s,box-shadow .25s}
+  .card:hover,.card:focus-within{transform:translateY(-3px);border-color:rgba(255,180,84,.55);box-shadow:0 14px 36px -18px rgba(255,160,60,.35)}
   .card .n{font:700 .8rem var(--mono);color:var(--amb);letter-spacing:.2em}
   .card h3{margin:8px 0 6px;font:700 1.15rem var(--mono);text-transform:uppercase;letter-spacing:.05em}
   .card p{margin:0;color:#b9b2a0;font-size:.96rem;line-height:1.6}
 
-  ul.feat{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-  ul.feat li{padding:14px 18px;border-left:2px solid var(--amb);background:#0b0c0e;color:#cfc8b6;font-size:.98rem}
+  ul.feat{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+  ul.feat li{padding:14px 18px;border-left:2px solid var(--amb);background:#0b0c0e;color:#cfc8b6;font-size:.98rem;transition:background .25s,border-color .25s}
+  ul.feat li:hover{background:#121316;border-color:var(--amb2)}
+
+  /* kronoloji */
+  .tl{position:relative;display:grid;grid-template-columns:repeat(7,1fr);margin-top:34px}
+  .tl::before{content:"";position:absolute;left:7%;right:7%;top:17px;height:2px;background:var(--line)}
+  .tl::after{content:"";position:absolute;left:7%;top:17px;height:2px;width:calc(86% * var(--p,0));background:var(--amb);box-shadow:0 0 8px var(--amb);transition:width .35s}
+  .tn{position:relative;z-index:1;background:none;border:0;padding:0 0 6px;display:grid;justify-items:center;gap:8px;cursor:pointer;color:var(--mut);font:600 .78rem var(--mono);letter-spacing:.04em}
+  .tn i{width:16px;height:16px;border-radius:50%;margin-top:10px;background:var(--bg);border:2px solid var(--line);transition:.25s}
+  .tn:hover,.tn[aria-pressed=true]{color:var(--amb)}
+  .tn:hover i,.tn[aria-pressed=true] i{border-color:var(--amb);background:var(--amb);box-shadow:0 0 12px var(--amb)}
+  .tn.cut i{border-color:var(--amb2)}
+  .tlnote{margin-top:18px;padding:18px 20px;border:1px solid var(--line);border-left:3px solid var(--amb);background:#0b0c0e;min-height:5.6em}
+  .tlnote b{display:block;font:700 .8rem var(--mono);letter-spacing:.15em;color:var(--amb);margin-bottom:4px}
+  .tlnote p{margin:0;color:#cfc8b6}
+
+  /* gürültü ölçer */
+  .noise{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,320px);gap:28px;align-items:center;margin-top:30px}
+  .nbtn{display:flex;flex-wrap:wrap;gap:10px}
+  .nbtn .btn[aria-pressed=true]{background:var(--amb);color:#111}
+  .nread{margin:22px 0 6px;font:800 clamp(2rem,7vw,3.2rem)/1 var(--mono);color:var(--amb);text-shadow:0 0 18px rgba(255,180,84,.45)}
+  .nnote{color:var(--mut);font-size:.92rem;margin:0}
+  .nz svg{display:block;width:100%;height:auto;max-width:320px;margin:0 auto;border:1px solid var(--line);border-radius:6px;background:#08090b}
+  .nz .ref{fill:none;stroke:rgba(255,180,84,.16);stroke-width:1}
+  .nz text{font:11px var(--mono);fill:var(--mut)}
+  #nzc{transform-box:fill-box;transform-origin:center;transition:transform .5s cubic-bezier(.2,.8,.2,1);fill:rgba(255,180,84,.12);stroke:var(--amb);stroke-width:1.5;vector-effect:non-scaling-stroke}
+  #nzc.run{stroke-dasharray:5 5;fill:rgba(255,122,69,.1);stroke:var(--amb2)}
+  .ping{fill:none;stroke:var(--amb);stroke-width:1;transform-box:fill-box;transform-origin:center;animation:ping 3s infinite;opacity:0}
+  @keyframes ping{0%{transform:scale(.1);opacity:.7}100%{transform:scale(1);opacity:0}}
+
+  /* sonlar */
+  .ends{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:30px}
+  .end{position:relative;overflow:hidden;aspect-ratio:3/4;display:grid;place-content:center;justify-items:center;gap:10px;border:1px solid var(--line);border-radius:4px;background:linear-gradient(#0d0e10,#08090a);color:var(--mut);font:700 1.3rem var(--mono);letter-spacing:.2em;transition:.25s}
+  .end svg{width:26px;height:26px;stroke:var(--mut);fill:none;stroke-width:1.6}
+  .end::after{content:"";position:absolute;inset:0;opacity:0;transition:opacity .25s;background:repeating-linear-gradient(0deg,rgba(255,180,84,.18) 0 2px,transparent 2px 5px),radial-gradient(circle at 30% 20%,rgba(255,255,255,.18),transparent 60%);animation:jit .25s steps(2) infinite}
+  .end:hover,.end:focus-visible{border-color:rgba(255,180,84,.55);color:var(--amb)}
+  .end:hover::after,.end:focus-visible::after{opacity:.6}
+  .end:hover svg,.end:focus-visible svg{stroke:var(--amb)}
+  @keyframes jit{50%{background-position:0 3px,0 0}}
+  .endnote{margin-top:16px;font:600 .8rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+
+  /* prototip durumu */
+  .check{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+  .check li{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--line);background:#0b0c0e;font-size:.96rem}
+  .check li svg{flex:none;width:18px;height:18px;stroke:var(--amb);fill:none;stroke-width:2.4}
+  .check li .chip{margin-left:auto}
+  .rel{margin-top:22px;font:600 .85rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--amb)}
 
   table{width:100%;border-collapse:collapse;margin-top:26px;font-size:.96rem}
-  td{padding:12px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+  td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:rgba(255,180,84,.025)}
+  tr:hover td{background:rgba(255,180,84,.06)}
   td:first-child{font:600 .8rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--amb);width:38%;padding-right:16px}
-  kbd{font:600 .8rem var(--mono);padding:2px 8px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;color:var(--amb);background:#0b0c0e}
+  kbd{font:600 .8rem var(--mono);padding:2px 8px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;color:var(--amb);background:#0b0c0e;white-space:nowrap}
 
-  footer{padding:60px 0 80px;text-align:center;color:var(--mut);font-size:.9rem;border-top:1px solid var(--line)}
+  /* sss */
+  details{border:1px solid var(--line);background:#0b0c0e;margin-top:10px;border-radius:4px}
+  summary{cursor:pointer;padding:14px 18px;font:700 .92rem var(--mono);letter-spacing:.04em;list-style:none;display:flex;justify-content:space-between;gap:12px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--amb);font-size:1.2rem;line-height:1}
+  details[open] summary::after{content:"\2212"}
+  details[open]{border-color:rgba(255,180,84,.45)}
+  details p{margin:0;padding:0 18px 16px;color:#cfc8b6;font-size:.98rem}
+
+  footer{padding:50px 0 80px;text-align:center;color:var(--mut);font-size:.9rem;border-top:1px solid var(--line)}
+  footer nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 22px;margin-bottom:18px}
+  footer nav a{font:600 .78rem var(--mono);letter-spacing:.1em;text-transform:uppercase;text-decoration:none}
+  footer nav a:hover{text-decoration:underline}
   .rv{opacity:0;transform:translateY(24px);transition:opacity .9s,transform .9s}
   .rv.in{opacity:1;transform:none}
+
+  @media(max-width:760px){
+    .noise{grid-template-columns:minmax(0,1fr)}
+    .ends{grid-template-columns:repeat(2,1fr)}
+    .end{aspect-ratio:auto;padding:26px 0}
+    .end:last-child{grid-column:1/-1}
+  }
+  @media(max-width:560px){
+    .nav{padding:12px 14px}
+    .nav nav{gap:12px}
+    .nav nav .hide-s{display:none}
+    .radio{padding:14px}
+    .play{width:64px;height:64px;margin:-32px 0 0 -32px}
+    td{display:block;width:auto!important;padding:4px 0}
+    td:first-child{border:0;padding-top:12px}
+    tr:nth-child(even) td,tr:hover td{background:none}
+    .tn{font-size:.62rem;letter-spacing:0}
+    .tn i{width:14px;height:14px}
+    .check li{flex-wrap:wrap}
+    .check li .chip{margin-left:30px}
+  }
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
+<a class="skip" href="#icerik">İçeriğe geç</a>
+<div class="strip" aria-hidden="true"><i id="stripFill"></i><b id="stripNeedle"></b></div>
 
-<nav class="nav"><span class="mono">The Long Static</span><a href="#radyo">Radyo</a></nav>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <pattern id="wvp" width="100" height="24" patternUnits="userSpaceOnUse"><path d="M4 9v6M10 5v14M16 8v8M22 2v20M28 7v10M34 10v4M40 4v16M46 8v8M52 11v2M58 6v12M64 1v22M70 7v10M76 9v6M82 3v18M88 8v8M94 10v4" stroke="#ffb454" stroke-width="2" stroke-linecap="round" fill="none"/></pattern>
+</defs></svg>
 
-<header class="hero">
+<div class="nav"><span class="mono">The Long Static</span>
+  <nav aria-label="Ana gezinme">
+    <a class="hide-s" href="#radyo">Radyo</a>
+    <a class="tr" href="#fragman" data-tr-open>Fragman<span class="soon-tag if-soon">yakında</span></a>
+    <a class="hide-s" href="#sss">SSS</a>
+  </nav>
+</div>
+
+<header class="hero" id="top">
   <div class="bg" role="img" aria-label="Kasım 1987, radyo başında oturan bir silüet"></div>
   <div class="wrap">
     <span class="badge mono"><i></i> Geliştirme aşamasında · Prototip</span>
     <h1>The Long<br>Static<em>Varn Ridge · Kasım 1987</em></h1>
     <p class="tag">Dağın tepesinde terk edilmiş bir röle istasyonu. Dışarıda kar fırtınası. Radyoya giren sesler geleceği anlatıyor; hangisine inanacağını seçmezsen sabaha çıkamazsın.</p>
+    <ul class="chips"><li>Tek gece · 00:00–06:00</li><li>Birinci şahıs</li><li>PC</li><li>Türkçe seslendirme</li></ul>
     <div class="cta">
       <a class="btn" href="#radyo">Radyoyu dinle</a>
+      <button class="btn sec" id="heroTr" type="button" data-tr-open disabled><span class="if-live">▶ Fragmanı izle</span><span class="if-soon">Fragman yakında</span></button>
       <span class="btn off">Çıkış tarihi: yakında</span>
     </div>
   </div>
+  <a class="scroll" href="#radyo" aria-label="Aşağı kaydır"><span></span>Kaydır</a>
 </header>
 
+<main id="icerik">
 <section id="radyo"><div class="wrap">
   <div class="rv">
     <span class="mono">Deneme yayını</span>
@@ -120,7 +313,7 @@
       <canvas id="st" width="200" height="105"></canvas>
       <div class="readout"><div class="freq"><span id="fq">96.4</span><small>MHz</small></div><div class="meter" id="mt"></div></div>
     </div>
-    <div class="msg" id="msg">&nbsp;</div>
+    <div class="msg" id="msg" aria-live="polite">&nbsp;</div>
     <div class="dialwrap">
       <input id="dial" type="range" min="880" max="1080" step="1" value="940" aria-label="Frekans">
       <div class="scale"><span>88</span><span>93</span><span>98</span><span>103</span><span>108</span></div>
@@ -132,6 +325,27 @@
   </div>
 </div></section>
 
+<svg class="wave" aria-hidden="true"><rect width="100%" height="24" fill="url(#wvp)"/></svg>
+
+<section id="fragman"><div class="wrap">
+  <div class="rv">
+    <div class="sechead"><span class="mono">Fragman</span>
+      <span class="chip if-soon">Yakında</span><span class="chip live if-live">Yayında</span></div>
+    <h2>Sinyal var mı?</h2>
+    <p class="lead"><span class="if-soon">Fragman henüz yayında değil. Hazır olduğunda burada, bu sayfada yayınlanacak.</span><span class="if-live">Fragmanı izlemek için oynat düğmesine bas. Video yalnızca sen başlatınca yüklenir.</span></p>
+  </div>
+  <div class="stage rv" id="stage">
+    <div class="poster" id="poster"></div>
+    <canvas id="trNoise" width="128" height="72" aria-hidden="true"></canvas>
+    <div class="nosig if-soon" role="img" aria-label="Sinyal yok. Fragman yakında."><b>Sinyal yok</b><span>Fragman yakında</span></div>
+    <button class="play if-live" id="playBtn" type="button" aria-label="Fragmanı oynat"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 3.5v17l14-8.5z"/></svg></button>
+    <div class="media" id="inline"></div>
+  </div>
+  <div class="trmeta rv if-live"><h3 id="trTitle"></h3><span id="trDur"></span><span id="trDate"></span></div>
+</div></section>
+
+<svg class="wave" aria-hidden="true"><rect width="100%" height="24" fill="url(#wvp)"/></svg>
+
 <section><div class="wrap">
   <div class="rv"><span class="mono">Oyun</span><h2>Dinle. Kaydet. Karar ver.</h2>
   <p class="lead">Birinci şahıs, tek mekânlı bir psikolojik korku. Sessizlik de silah de aynı: ne kadar gürültü çıkarırsan o kadar duyulursun.</p></div>
@@ -142,6 +356,51 @@
   </div>
 </div></section>
 
+<svg class="wave" aria-hidden="true"><rect width="100%" height="24" fill="url(#wvp)"/></svg>
+
+<section id="gece"><div class="wrap">
+  <div class="rv"><span class="mono">Gece kronolojisi</span><h2>Altı saat</h2>
+  <p class="lead">Gece 00:00 ile 06:00 arasında geçer. Bir saate dokun; o saatte neyle karşılaşabileceğine dair kısa bir not gör.</p></div>
+  <div class="tl rv" id="tl" role="group" aria-label="Gece saatleri">
+    <button class="tn" type="button" aria-pressed="true" data-h="0"><i></i>00:00</button>
+    <button class="tn" type="button" aria-pressed="false" data-h="1"><i></i>01:00</button>
+    <button class="tn" type="button" aria-pressed="false" data-h="2"><i></i>02:00</button>
+    <button class="tn" type="button" aria-pressed="false" data-h="3"><i></i>03:00</button>
+    <button class="tn cut" type="button" aria-pressed="false" data-h="4"><i></i>04:00</button>
+    <button class="tn" type="button" aria-pressed="false" data-h="5"><i></i>05:00</button>
+    <button class="tn" type="button" aria-pressed="false" data-h="6"><i></i>06:00</button>
+  </div>
+  <div class="tlnote rv" id="tlNote" aria-live="polite"><b id="tlH">00:00</b><p id="tlT"></p></div>
+</div></section>
+
+<section id="olcer" style="padding-top:20px"><div class="wrap">
+  <div class="rv"><span class="mono">Gürültü ölçer</span><h2>Ne kadar uzaktan duyulursun?</h2>
+  <p class="lead">Dinleyen seni görmez, duyar. Bir hareket seç; dairenin içindeysen seni duyabilir.</p></div>
+  <div class="noise rv">
+    <div>
+      <div class="nbtn" role="group" aria-label="Hareket türü">
+        <button class="btn" type="button" data-m="walk" aria-pressed="true">Yürü</button>
+        <button class="btn" type="button" data-m="sneak" aria-pressed="false">Sessiz yürü (Shift)</button>
+        <button class="btn" type="button" data-m="run" aria-pressed="false">Koş</button>
+      </div>
+      <div class="nread" id="nRead" aria-live="polite">~9 m</div>
+      <p class="nnote" id="nNote">Normal yürüme.</p>
+      <p class="nnote" style="margin-top:10px">Radyo açıkken de duyulabilirsin.</p>
+    </div>
+    <div class="nz">
+      <svg viewBox="0 0 320 320" role="img" aria-label="Üstten görünüm. Ortada sen, çevrende Dinleyen'in seni duyabileceği mesafe.">
+        <circle class="ref" cx="160" cy="160" r="120"/><circle class="ref" cx="160" cy="160" r="26.7"/>
+        <text x="164" y="46">9 m</text><text x="164" y="130">2 m</text>
+        <circle class="ping" cx="160" cy="160" r="120"/>
+        <circle id="nzc" cx="160" cy="160" r="120"/>
+        <circle cx="160" cy="160" r="5" fill="#ffb454"/>
+      </svg>
+    </div>
+  </div>
+</div></section>
+
+<svg class="wave" aria-hidden="true"><rect width="100%" height="24" fill="url(#wvp)"/></svg>
+
 <section><div class="wrap">
   <div class="rv"><span class="mono">Atmosfer</span><h2>Korkutan şey sessizlik</h2></div>
   <ul class="feat rv">
@@ -149,10 +408,46 @@
     <li>Ani korkutma (jumpscare) yok. Gerilim yavaş yavaş birikir ve çekilir.</li>
     <li>Elektrik kesilebilir; jeneratörü çalıştırmak da gürültü demek.</li>
     <li>Radyoda Türkçe seslendirilmiş yayınlar ve altyazılar.</li>
+    <li>Kulaklıkla oyna: tehdit yaklaşırken ortam sesi çekilir, çok alçak bir uğultu yükselir.</li>
+    <li>Not defterin çelişen yayınları işaretler. Hangisinin doğru olduğunu söylemez.</li>
     <li>Tek mekân, çok katman: istasyondaki her belge ve her ses bir parça.</li>
-    <li>Birden fazla son.</li>
+    <li>Beş farklı son ve Yeni Oyun+: geceyi bir kez daha yaşarsan bazı yayınlar ve istasyondaki küçük şeyler değişir.</li>
   </ul>
 </div></section>
+
+<svg class="wave" aria-hidden="true"><rect width="100%" height="24" fill="url(#wvp)"/></svg>
+
+<section id="sonlar"><div class="wrap">
+  <div class="rv"><span class="mono">Sonlar</span><h2>5 son · biri gizli</h2>
+  <p class="lead">Sabaha nasıl çıkacağın sana kalmış. Hepsi kilitli.</p></div>
+  <div class="ends rv">
+    <div class="end" tabindex="0" aria-label="Kilitli son"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>???</div>
+    <div class="end" tabindex="0" aria-label="Kilitli son"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>???</div>
+    <div class="end" tabindex="0" aria-label="Kilitli son"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>???</div>
+    <div class="end" tabindex="0" aria-label="Kilitli son"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>???</div>
+    <div class="end" tabindex="0" aria-label="Kilitli son"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>???</div>
+  </div>
+</div></section>
+
+<section id="durum" style="padding-top:20px"><div class="wrap">
+  <div class="rv"><span class="mono">Prototip durumu</span><h2>Şu an neler var</h2>
+  <p class="lead">Oynanabilir bir prototip var. Aşağıdakilerin hepsi prototip aşamasında; değişebilir.</p></div>
+  <ul class="check rv">
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Oynanabilir gece<span class="chip">prototip</span></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Tek mekân<span class="chip">prototip</span></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Radyo ve teyp<span class="chip">prototip</span></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Not defteri<span class="chip">prototip</span></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Sesle algılayan tehdit<span class="chip">prototip</span></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>5 son<span class="chip">prototip</span></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Yeni Oyun+<span class="chip">prototip</span></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Gamepad desteği<span class="chip">prototip</span></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Türkçe / İngilizce altyazı<span class="chip">prototip</span></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Erişilebilirlik ayarları<span class="chip">prototip</span></li>
+  </ul>
+  <p class="rel rv">Çıkış tarihi: yakında</p>
+</div></section>
+
+<svg class="wave" aria-hidden="true"><rect width="100%" height="24" fill="url(#wvp)"/></svg>
 
 <section><div class="wrap">
   <div class="rv"><span class="mono">Bilgiler</span><h2>Oyun kartı</h2></div>
@@ -163,7 +458,10 @@
     <tr><td>Platform</td><td>PC</td></tr>
     <tr><td>Süre (hedef)</td><td>İlk oynanış 3–4 saat, tüm sonlar için 6–8 saat</td></tr>
     <tr><td>Yaş</td><td>16+ (gerilim ve ölüm temaları; kan ve vahşet yok)</td></tr>
-    <tr><td>Dil</td><td>Türkçe</td></tr>
+    <tr><td>Dil</td><td>Türkçe seslendirme · altyazı ve arayüz: Türkçe, İngilizce</td></tr>
+    <tr><td>Sonlar</td><td>5 (biri gizli) · Yeni Oyun+</td></tr>
+    <tr><td>Kontrol</td><td>Klavye ve fare · gamepad</td></tr>
+    <tr><td>Erişilebilirlik</td><td>Altyazı boyutu, renk körlüğüne uygun palet, isteğe bağlı sinyal yönü göstergesi (prototip)</td></tr>
   </table>
   <div class="rv" style="margin-top:46px"><span class="mono">Kontroller</span>
     <table>
@@ -173,15 +471,59 @@
       <tr><td><kbd>R</kbd></td><td>Radyoyu aç ya da kapat</td></tr>
       <tr><td><kbd>Q</kbd> / <kbd>E</kbd></td><td>Frekans çevir</td></tr>
       <tr><td><kbd>T</kbd> · <kbd>Tab</kbd></td><td>Yayını teybe al · Not defteri</td></tr>
+      <tr><td><kbd>C</kbd></td><td>El feneri</td></tr>
+      <tr><td><kbd>Space</kbd></td><td>Dolapta basılı tut: nefesini tut</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Duraklat ve ayarlar</td></tr>
     </table>
   </div>
 </div></section>
 
+<section id="erisim" style="padding-top:20px"><div class="wrap">
+  <div class="rv"><span class="mono">Erişilebilirlik</span><h2>Herkes dinleyebilsin</h2></div>
+  <div class="grid3">
+    <div class="card rv"><h3>Altyazı boyutu</h3><p>Altyazıları kendi okuma rahatlığına göre ayarla.</p><p style="margin-top:10px"><span class="chip">prototip</span></p></div>
+    <div class="card rv"><h3>Renk körlüğü paleti</h3><p>Renklere bağımlı olmayan, renk körlüğüne uygun bir palet.</p><p style="margin-top:10px"><span class="chip">prototip</span></p></div>
+    <div class="card rv"><h3>Sinyal yönü</h3><p>İsteğe bağlı bir gösterge, sinyalin hangi yönden geldiğini işaretler.</p><p style="margin-top:10px"><span class="chip">prototip</span></p></div>
+    <div class="card rv"><h3>Gamepad</h3><p>Klavye ve farenin yanında gamepad ile de oynanabilir.</p><p style="margin-top:10px"><span class="chip">prototip</span></p></div>
+  </div>
+</div></section>
+
+<section id="sss" style="padding-top:20px"><div class="wrap">
+  <div class="rv"><span class="mono">Sık sorulanlar</span><h2>SSS</h2></div>
+  <div class="rv">
+    <details><summary>Ne zaman çıkıyor?</summary><p>Yakında. Henüz bir çıkış tarihi yok.</p></details>
+    <details><summary>Hangi platform?</summary><p>PC.</p></details>
+    <details><summary>Jumpscare var mı?</summary><p>Ani korkutma yok. Gerilim yavaş yavaş birikir.</p></details>
+    <details><summary>Hangi diller?</summary><p>Türkçe seslendirme. Altyazı ve arayüz için Türkçe ve İngilizce.</p></details>
+    <details><summary>Gamepad destekleniyor mu?</summary><p>Evet, prototip aşamasında destekleniyor.</p></details>
+    <details><summary>Fragman var mı?</summary><p><span class="if-soon">Yakında. Hazır olduğunda bu sayfada yayınlanacak.</span><span class="if-live">Evet. <a href="#fragman" data-tr-open>Fragmanı izle</a>.</span></p></details>
+  </div>
+</div></section>
+</main>
+
 <footer><div class="wrap">
+  <nav aria-label="Alt bilgi gezinmesi">
+    <a href="#radyo">Radyo</a>
+    <a href="#fragman" data-tr-open>Fragman<span class="soon-tag if-soon">yakında</span></a>
+    <a href="#gece">Gece</a>
+    <a href="#sss">SSS</a>
+    <a href="#top">Başa dön</a>
+  </nav>
   <p>The Long Static: Varn Ridge şu an geliştirme aşamasında; içerik ve özellikler değişebilir.</p>
 </div></footer>
 
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Fragman">
+  <div class="mbox">
+    <button class="mclose" id="mClose" type="button">Kapat · Esc</button>
+    <div class="mframe" id="mFrame"></div>
+    <p class="mtitle" id="mTitle"></p>
+  </div>
+</div>
+
 <script>
+/* ---- FRAGMAN YAPILANDIRMASI: yalnızca burayı doldur (ayrıntı: dosyanın en üstündeki yorum) ---- */
+const TRAILER = { youtube: '', mp4: '', poster: 'cover.webp', title: 'The Long Static: Varn Ridge – Fragman', duration: '', date: '' };
+
 /* ---- sinyaller (sadece havayı veren kısa parçalar) ---- */
 const SIG=[
  {f:88.8,t:'“…bugün hava kapalı, rüzgâr kuzeyden, görüş iki yüz metre…”'},
@@ -223,10 +565,11 @@ function noise(){
   for(let i=0;i<d.length;i+=4){const v=Math.random()*170;d[i]=v;d[i+1]=v*.85;d[i+2]=v*.6;d[i+3]=a}
   cx.putImageData(img,0,0);
 }
-let raf;function loop(){noise();raf=requestAnimationFrame(loop)}
+let raf,radioVis=true;function loop(){cancelAnimationFrame(raf);if(!radioVis)return;noise();raf=requestAnimationFrame(loop)}
 if(reduce)noise();else loop();
 dial.addEventListener('input',()=>{if(reduce)noise()});
 document.addEventListener('visibilitychange',()=>{if(reduce)return;if(document.hidden)cancelAnimationFrame(raf);else loop()});
+if('IntersectionObserver' in window&&!reduce)new IntersectionObserver(es=>{radioVis=es[0].isIntersecting;if(radioVis&&!document.hidden)loop();else cancelAnimationFrame(raf)}).observe(cv);
 
 /* ---- ses (kullanıcı isteyince) ---- */
 const snd=document.getElementById('snd'),hint=document.getElementById('hint');
@@ -249,6 +592,126 @@ if('IntersectionObserver' in window){
   els.forEach(e=>io.observe(e));
 }else els.forEach(e=>e.classList.add('in'));
 update();
+
+/* ================= Fragman ================= */
+(function(){
+  const root=document.documentElement,$=id=>document.getElementById(id);
+  const ytId=(()=>{const v=(TRAILER.youtube||'').trim();if(!v)return'';const m=v.match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/)([\w-]{6,})/);return m?m[1]:(/^[\w-]{6,}$/.test(v)?v:'')})();
+  const mp4=(TRAILER.mp4||'').trim();
+  const HAS=!!(ytId||mp4);
+  root.dataset.trailer=HAS?'live':'soon';
+  const heroTr=$('heroTr');heroTr.disabled=!HAS;
+  const stage=$('stage'),inline=$('inline'),modal=$('modal'),mFrame=$('mFrame'),mClose=$('mClose');
+  if(TRAILER.poster)$('poster').style.backgroundImage='url("'+String(TRAILER.poster).replace(/["\\]/g,'')+'")';
+  $('trTitle').textContent=TRAILER.title||'';
+  $('trDur').textContent=TRAILER.duration?'Süre: '+TRAILER.duration:'';
+  $('trDate').textContent=TRAILER.date?'Tarih: '+TRAILER.date:'';
+  $('mTitle').textContent=TRAILER.title||'';
+  modal.setAttribute('aria-label',TRAILER.title||'Fragman');
+
+  /* paylaşım meta + JSON-LD (dolunca) */
+  if(HAS){
+    const abs=u=>{try{return new URL(u,location.href).href}catch(e){return u}};
+    const embed=ytId?'https://www.youtube-nocookie.com/embed/'+ytId:abs(mp4);
+    const type=ytId?'text/html':'video/mp4';
+    const add=(a,k,v)=>{const m=document.createElement('meta');m.setAttribute(a,k);m.content=v;document.head.appendChild(m)};
+    add('property','og:video',embed);add('property','og:video:secure_url',embed);add('property','og:video:type',type);
+    add('property','og:video:width','1280');add('property','og:video:height','720');
+    if(ytId){add('name','twitter:card','player');add('name','twitter:player',embed);add('name','twitter:player:width','1280');add('name','twitter:player:height','720')}
+    const ld={'@context':'https://schema.org','@type':'VideoObject',name:TRAILER.title,description:document.querySelector('meta[name=description]').content,thumbnailUrl:abs(TRAILER.poster||'cover.webp')};
+    if(/^\d{4}-\d{2}-\d{2}/.test(TRAILER.date||''))ld.uploadDate=TRAILER.date;
+    const dm=(TRAILER.duration||'').match(/^(?:(\d+):)?(\d{1,2}):(\d{2})$/);
+    if(dm)ld.duration='PT'+(dm[1]?dm[1]+'H':'')+(+dm[2])+'M'+(+dm[3])+'S';
+    ld[ytId?'embedUrl':'contentUrl']=embed;
+    const s=document.createElement('script');s.type='application/ld+json';s.textContent=JSON.stringify(ld);document.head.appendChild(s);
+  }
+
+  function media(){
+    if(ytId){const f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(ytId)+'?autoplay=1&rel=0';f.title=TRAILER.title||'Fragman';f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.referrerPolicy='strict-origin-when-cross-origin';return f}
+    const v=document.createElement('video');v.controls=true;v.playsInline=true;v.preload='none';if(TRAILER.poster)v.poster=TRAILER.poster;v.src=mp4;v.setAttribute('aria-label',TRAILER.title||'Fragman');
+    const p=v.play();if(p&&p.catch)p.catch(()=>{});return v;
+  }
+  function stopInline(){inline.replaceChildren();stage.classList.remove('playing')}
+  $('playBtn').addEventListener('click',()=>{if(!HAS)return;inline.replaceChildren(media());stage.classList.add('playing')});
+
+  let last=null;
+  function open(opener){
+    if(!HAS)return;
+    stopInline();last=opener||document.activeElement;
+    mFrame.replaceChildren(media());
+    modal.classList.add('open');root.classList.add('lock');mClose.focus();
+  }
+  function close(){
+    if(!modal.classList.contains('open'))return;
+    mFrame.replaceChildren();modal.classList.remove('open');root.classList.remove('lock');
+    if(last&&last.focus&&document.contains(last))last.focus();last=null;
+  }
+  document.querySelectorAll('[data-tr-open]').forEach(el=>el.addEventListener('click',e=>{if(!HAS)return;e.preventDefault();open(el)}));
+  mClose.addEventListener('click',close);
+  modal.addEventListener('mousedown',e=>{if(e.target===modal)close()});
+  document.addEventListener('keydown',e=>{
+    if(!modal.classList.contains('open'))return;
+    if(e.key==='Escape'){e.preventDefault();close();return}
+    if(e.key==='Tab'){
+      const f=[...modal.querySelectorAll('button,iframe,video')];if(!f.length)return;
+      const a=document.activeElement,i=f.indexOf(a);
+      if(e.shiftKey&&(i<=0)){e.preventDefault();f[f.length-1].focus()}
+      else if(!e.shiftKey&&(i===f.length-1||i<0)){e.preventDefault();f[0].focus()}
+    }
+  });
+  if(HAS&&new URLSearchParams(location.search).get('fragman')==='1')open(null);
+
+  /* parazit (fragman çerçevesi) */
+  const tc=$('trNoise'),tx=tc.getContext('2d'),tw=tc.width,th=tc.height,ti=tx.createImageData(tw,th);
+  function tn(){const a=HAS?Math.round(.1*255):Math.round(.6*255),d=ti.data;for(let i=0;i<d.length;i+=4){const v=Math.random()*170;d[i]=v;d[i+1]=v*.85;d[i+2]=v*.6;d[i+3]=a}tx.putImageData(ti,0,0)}
+  let tr,tv=false,tl=0;
+  function tloop(t){tr=0;if(!tv||document.hidden)return;if(t-tl>80){tl=t;tn()}tr=requestAnimationFrame(tloop)}
+  tn();
+  if(!reduce&&'IntersectionObserver' in window){
+    new IntersectionObserver(es=>{tv=es[0].isIntersecting;if(tv&&!tr)tr=requestAnimationFrame(tloop)}).observe(tc);
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden&&tv&&!tr)tr=requestAnimationFrame(tloop)});
+  }
+
+  /* sinyal şeridi */
+  const sf=$('stripFill'),sn=$('stripNeedle');let tick=false;
+  function sp(){tick=false;const h=root.scrollHeight-innerHeight,p=h>0?Math.min(1,Math.max(0,scrollY/h)):0;sf.style.transform='scaleX('+p+')';sn.style.left='calc('+(p*100)+'% - '+(p*2)+'px)'}
+  addEventListener('scroll',()=>{if(!tick){tick=true;requestAnimationFrame(sp)}},{passive:true});addEventListener('resize',sp);sp();
+
+  /* hero: görünmezken animasyonlar durur */
+  const hero=document.querySelector('.hero');
+  if('IntersectionObserver' in window)new IntersectionObserver(es=>hero.classList.toggle('idle',!es[0].isIntersecting)).observe(hero);
+
+  /* gece kronolojisi */
+  const NOTES=[
+    'Gece başlar. İlk yayınlar kadranda belirmeye başlar.',
+    'Yayınlar aynı saatte başlamaz; bir kısmı çoktan susmuş olabilir. Notlarını al.',
+    'Sesler değişir. Radyoda ve istasyonda eskisi gibi değil.',
+    'Gecenin ortası geçti. Kaçırdığın yayınlar için zaman daralıyor.',
+    'Elektrik kesilir. Jeneratörü çalıştırmak da gürültü demek.',
+    'Karanlıkta geçen son saatler. Sabaha kadar dayanman gerekiyor.',
+    'Sabah.'
+  ];
+  const tns=[...document.querySelectorAll('.tn')],tlEl=$('tl');
+  function pick(i){
+    tns.forEach((b,j)=>b.setAttribute('aria-pressed',j===i?'true':'false'));
+    tlEl.style.setProperty('--p',i/6);$('tlH').textContent=tns[i].textContent;$('tlT').textContent=NOTES[i];
+  }
+  tns.forEach((b,i)=>{
+    b.addEventListener('click',()=>pick(i));b.addEventListener('focus',()=>pick(i));
+    b.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){e.preventDefault();const n=tns[Math.min(6,Math.max(0,i+d))];n.focus()}});
+  });
+  pick(0);
+
+  /* gürültü ölçer */
+  const M={walk:{s:1,r:'~9 m',n:'Normal yürüme.'},sneak:{s:2/9,r:'~2 m',n:'Sessiz yürüme (Shift).'},run:{s:1.25,r:'Daha geniş',n:'Koşmak için bu demoda ölçü yok; yürümekten daha gürültülü.'}};
+  const nz=$('nzc');
+  document.querySelectorAll('[data-m]').forEach(b=>b.addEventListener('click',()=>{
+    const m=M[b.dataset.m];
+    document.querySelectorAll('[data-m]').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));
+    nz.style.transform='scale('+m.s+')';nz.classList.toggle('run',b.dataset.m==='run');
+    $('nRead').textContent=m.r;$('nNote').textContent=m.n;
+  }));
+})();
 </script>
 </body>
 </html>
