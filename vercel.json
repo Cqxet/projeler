@@ -3,6 +3,9 @@
   "functions": {
     "api/admin.js": {
       "includeFiles": "private/**"
+    },
+    "api/holding.js": {
+      "includeFiles": "private/holding/**"
     }
   },
   "rewrites": [
@@ -33,6 +36,14 @@
     {
       "source": "/admin.html",
       "destination": "/api/admin"
+    },
+    {
+      "source": "/holding",
+      "destination": "/api/holding?p=index.html"
+    },
+    {
+      "source": "/holding/:path*",
+      "destination": "/api/holding?p=:path*"
     }
   ],
   "headers": [
@@ -81,6 +92,19 @@
     },
     {
       "source": "/api/:path*",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/holding/:path*",
       "headers": [
         {
           "key": "X-Frame-Options",

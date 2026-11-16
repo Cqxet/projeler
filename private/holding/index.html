@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Soylu Holding</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside id="side">
+  <div class="top"><b>🏢 Soylu Holding</b>
+    <div><button class="ib" id="pbtn" title="Holding paneli">📊</button><button class="ib" id="gear" title="Ayarlar / 9Router">⚙</button></div></div>
+  <div id="hudbar"></div>
+  <div id="list"></div>
+</aside>
+
+<section id="chat">
+  <div id="hd">
+    <button class="ib back" id="back">←</button>
+    <div id="hav"></div>
+    <div class="tt"><b id="hname"></b><small id="hsub"></small></div>
+    <div id="who"></div>
+    <button class="ib" id="clkbtn" title="Saati ilerlet">⏩</button>
+    <button class="ib" id="undo" title="Geri al" style="opacity:.3">↩</button>
+    <button class="ib" id="mbtn" title="Grup üyelerini düzenle" style="display:none">👥</button>
+    <button class="ib" id="callall" title="Odadan çıkanları geri çağır" style="display:none">🔔</button>
+    <button class="ib" id="stop" title="Hepsini durdur">⏹</button>
+    <button class="ib on" id="vbtn" title="Sesi aç/kapat">🔊</button>
+  </div>
+  <div id="log"></div>
+  <div id="taskbar"></div>
+  <div id="bar">
+    <input id="text" placeholder="Mesaj yaz… (@Kerem ile tek kişiye)" autocomplete="off">
+    <button id="act">🎤</button>
+  </div>
+</section>
+
+<div id="clkmenu"></div>
+<div class="ov right" id="cfg"><div class="pnl" id="cfgp"></div></div>
+<div class="ov right" id="pnl"><div class="pnl" id="pnlp"></div></div>
+<div class="ov mid" id="ng"><div class="card" id="ngc"></div></div>
+
+<script src="js/01-data.js"></script>
+<script src="js/02-state.js"></script>
+<script src="js/03-ui-list.js"></script>
+<script src="js/04-ui-messages.js"></script>
+<script src="js/05-tts.js"></script>
+<script src="js/06-ai-core.js"></script>
+<script src="js/07-actions.js"></script>
+<script src="js/08-backstage.js"></script>
+<script src="js/09-gm.js"></script>
+<script src="js/10-game.js"></script>
+<script src="js/11-extras.js"></script>
+<script src="js/12-mic.js"></script>
+<script src="js/13-undo.js"></script>
+<script src="js/14-hr.js"></script>
+<script src="js/15-members.js"></script>
+<script src="js/16-topbar.js"></script>
+<script src="js/17-panel.js"></script>
+<script src="js/18-newgame.js"></script>
+<script src="js/19-settings.js"></script>
+<script src="js/20-boot.js"></script>
+<script src="realism.js"></script>
+</body></html>
